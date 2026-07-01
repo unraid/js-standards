@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "import", "promise", "oxc"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "eqeqeq": "error",
+    "no-debugger": "error",
+    "no-await-in-loop": "off",
+    "import/no-unassigned-import": "off",
+    "unicorn/require-module-specifiers": "off"
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    ".nuxt/**",
+    ".output/**",
+    ".wrangler/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "**/*.generated.ts",
+    "**/worker-configuration.d.ts"
+  ]
+}

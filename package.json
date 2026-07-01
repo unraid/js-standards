@@ -27,7 +27,8 @@
     "./tsconfig/base.json": "./src/tsconfig/base.json",
     "./tsconfig/nuxt.json": "./src/tsconfig/nuxt.json",
     "./tsconfig/worker.json": "./src/tsconfig/worker.json",
-    "./knip/base": "./src/knip/base.js"
+    "./knip/base": "./src/knip/base.js",
+    "./oxlint/base": "./src/oxlint/base.json"
   },
   "scripts": {
     "lint": "eslint .",
