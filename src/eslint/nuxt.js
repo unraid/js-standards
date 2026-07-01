@@ -4,14 +4,19 @@
  * Layers the anti-slop base with Nuxt's own flat config (Vue SFC parsing,
  * auto-import awareness) and the Cloudflare Workers + webGUI globals our Nuxt
  * apps run against. Repos append only their own overrides after this.
+ *
+ * `createConfigForNuxt()` returns a lazy FlatConfigComposer, so we resolve it
+ * to a plain array (top-level await) to keep this preset spreadable.
  */
 import { createConfigForNuxt } from "@nuxt/eslint-config/flat";
 import base from "./base.js";
 import { cloudflareWorkerGlobals, webguiGlobals } from "./globals.js";
 
+const nuxtConfigs = await createConfigForNuxt().toConfigs();
+
 export default [
 	...base,
-	...createConfigForNuxt(),
+	...nuxtConfigs,
 	{
 		languageOptions: {
 			globals: { ...cloudflareWorkerGlobals, ...webguiGlobals },
@@ -20,7 +25,6 @@ export default [
 			// Nuxt auto-imports + generated component types make these noisy/wrong.
 			"no-undef": "off",
 			"vue/no-undef-components": "off",
-			"import-x/no-unresolved": "off",
 
 			// Team conventions carried over from existing repo configs.
 			"vue/multi-word-component-names": "off",
