@@ -1,8 +1,8 @@
 # @unraid/js-standards
 
-Lime Technology's shared JS/TS quality + **anti-slop** presets. One package, one
-pinned toolchain, consumed by every LT JavaScript repo so AI-generated code is
-held to the same aggressive bar everywhere.
+Lime Technology's shared JS/TS **code-quality** presets. One package, one pinned
+toolchain, consumed by every LT JavaScript repo so all code is held to the same
+aggressive bar everywhere.
 
 Bundles and version-pins the whole stack (typescript-eslint, unicorn, sonarjs,
 import-x, eslint-comments, deslop) so a consumer installs **one** dependency
@@ -18,7 +18,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 
 | Export | = concerns | For |
 | --- | --- | --- |
-| `eslint/base` | ignores + typescript + anti-slop + testing | Plain TS libs / Node packages |
+| `eslint/base` | ignores + typescript + quality + testing | Plain TS libs / Node packages |
 | `eslint/worker` | base + cloudflare-workers | Non-Nuxt Workers / services |
 | `eslint/nuxt` | base + cloudflare-workers + vue + webGUI globals | Nuxt 4 apps on Workers |
 
@@ -27,7 +27,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | Export | Concern |
 | --- | --- |
 | `eslint/typescript` | Type-safety — strict-type-checked + stylistic, unsafe-any / promise / nullish rules |
-| `eslint/anti-slop` | Slop patterns — unicorn (tuned), sonarjs, eslint-comments, deslop, complexity/size budgets, duplication |
+| `eslint/quality` | Quality patterns — unicorn (tuned), sonarjs, eslint-comments, deslop, complexity/size budgets, duplication |
 | `eslint/vue` | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions |
 | `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards |
 | `eslint/testing` | Spec/fixture relaxations |
@@ -50,20 +50,20 @@ existing backlog in one PR, so gate new code first and flip to `error` per repo
 once the baseline is under budget. Pure-opinion rules that fight domain naming
 (`unicorn/name-replacements`, abbreviation nagging, etc.) are disabled outright.
 
-## What the anti-slop rules catch
+## What the quality rules catch
 
 - **Type escapes** — `no-explicit-any`, `no-non-null-assertion`, unsafe `any`
   assignment/call/return (typescript-eslint `strict-type-checked`).
-- **Async bugs** — floating & misused promises, needless `await` (the most
-  common AI Worker bug).
-- **Needless code** — `no-unnecessary-condition` flags the pointless guards AI
-  loves to add; knip deletes orphaned files/exports/deps.
+- **Async bugs** — floating & misused promises, needless `await` (a common
+  Workers footgun).
+- **Needless code** — `no-unnecessary-condition` flags pointless guards on
+  non-nullable values; knip deletes orphaned files/exports/deps.
 - **Sprawl** — complexity, cognitive-complexity, `max-lines`, `max-params`,
   nesting budgets force refactors instead of 300-line functions.
 - **Copy-paste** — sonarjs duplicate-string / identical-functions.
 - **Escape hatches** — `eslint-comments` bans blanket / undescribed
   `eslint-disable`.
-- **Comment slop** — deslop flags comments that just restate the code.
+- **Redundant comments** — deslop flags comments that just restate the code.
 
 ## Usage
 
@@ -130,7 +130,7 @@ adding a second one, or the concern's rule is silently overridden:
 ### Deduping plugins when layering on `@nuxt/eslint-config`
 
 The `nuxt`/`vue` presets pull Nuxt's bundled typescript-eslint / unicorn /
-import-x. Combined with our `typescript` + `anti-slop` concerns that can produce
+import-x. Combined with our `typescript` + `quality` concerns that can produce
 two copies of a plugin and ESLint throws *"Cannot redefine plugin"*. Pin them to
 one version in the consumer:
 
@@ -147,7 +147,7 @@ one version in the consumer:
 
 **ESLint is the authoritative gate.** It's the only tool that covers everything
 we need: Vue `<template>` rules, sonarjs cognitive-complexity + duplication,
-deslop AI-comment-slop, and the full type-aware set including
+deslop redundant-comment detection, and the full type-aware set including
 `no-unnecessary-condition` and `no-misused-promises`. It's slow (~135s on
 community-apps-worker) but complete — run it in CI and pre-push.
 
@@ -226,8 +226,8 @@ stack:
   (Vue uses its own compiler / modified AST, so many rules can't run against SFC
   templates), and Biome's Vue/Nuxt story is still thin. ESLint has the only
   mature Vue/Nuxt configs.
-- **The anti-slop value lives in ESLint plugins.** unicorn, sonarjs, deslop, and
-  eslint-comments have no Biome/Oxlint equivalent.
+- **The quality-rule value lives in ESLint plugins.** unicorn, sonarjs, deslop,
+  and eslint-comments have no Biome/Oxlint equivalent.
 - **Type-aware rules are the core of this config.** typescript-eslint's
   strict-type-checked is fully mature; Oxlint's `tsgolint` type-aware mode is
   still preview with known memory/deadlock issues on large monorepos — and we
@@ -237,7 +237,7 @@ stack:
 (pre-commit + first CI step) for the syntactic rules it already covers — it's
 50–100× faster and gives near-instant local feedback — with
 `eslint-plugin-oxlint` turning off the ESLint rules Oxlint handles to avoid
-double work. ESLint stays authoritative for type-aware + Vue + anti-slop. If
+double work. ESLint stays authoritative for type-aware + Vue + quality rules. If
 that pre-pass lands, it ships here as an `oxlint/base` export.
 
 ## Rollout guidance

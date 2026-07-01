@@ -2,8 +2,8 @@
  * @unraid/js-standards — shared knip base config.
  *
  * knip finds dead code the type-checker and ESLint miss: unused files, unused
- * exports, and unused/undeclared dependencies — the orphaned helpers and
- * phantom deps AI-generated changes leave behind.
+ * exports, and unused/undeclared dependencies — orphaned helpers and phantom
+ * deps that accumulate as a codebase changes.
  *
  * Consumers spread this and add project-specific `entry` points:
  *

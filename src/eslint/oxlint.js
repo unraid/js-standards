@@ -4,7 +4,7 @@
  * When you run the Oxlint pre-pass (see `oxlint/base`), append this LAST in your
  * ESLint config so ESLint turns OFF every rule Oxlint already covers. That
  * avoids double-reporting and trims the slow ESLint run down to what only it can
- * do (type-aware + Vue + the anti-slop plugins Oxlint lacks).
+ * do (type-aware + Vue + the quality plugins Oxlint lacks).
  *
  *   import unraid from "@unraid/js-standards/eslint/nuxt";
  *   import oxlintDisable from "@unraid/js-standards/eslint/oxlint";

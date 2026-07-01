@@ -7,7 +7,7 @@
  * keep this concern spreadable.
  *
  * NB: this pulls Nuxt's bundled typescript-eslint / unicorn / import-x. When
- * composed with the `typescript` + `anti-slop` concerns, consumers must dedupe
+ * composed with the `typescript` + `quality` concerns, consumers must dedupe
  * those to a single version (see README → pnpm overrides) or ESLint throws
  * "Cannot redefine plugin".
  */

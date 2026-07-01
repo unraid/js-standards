@@ -1,13 +1,13 @@
 /**
- * Concern: anti-slop. Framework-agnostic. The rules that specifically target
- * AI-generated failure patterns, split by intent below:
+ * Concern: code quality. Framework-agnostic. The rules that catch low-quality
+ * and error-prone patterns, split by intent below:
  *
  *   - correctness footguns        (eqeqeq, no-console, no-nested-ternary…)
- *   - comment slop                (deslop, no-warning-comments)
+ *   - redundant comments          (deslop, no-warning-comments)
  *   - eslint-disable abuse        (@eslint-community/eslint-comments)
  *   - complexity / size budgets   (warn + ratchet — you can't refactor a
  *                                  backlog at once; gate new code first)
- *   - duplication                 (sonarjs — copy-paste is an AI signature)
+ *   - duplication                 (sonarjs — catches copy-paste)
  *   - import hygiene              (syntactic import-x rules; tsc owns resolution)
  *
  * Pure-opinion / stack-hostile rules (unicorn name/abbreviation nagging, etc.)
@@ -40,14 +40,14 @@ export default [
 			"no-nested-ternary": "error",
 			"no-param-reassign": "error",
 
-			// --- Comment slop (heuristic → warn, not a hard wall)
+			// --- Redundant comments that just restate the code (heuristic → warn)
 			"deslop/no-obvious-comments": "warn",
 			"no-warning-comments": [
 				"warn",
 				{ terms: ["todo", "fixme", "xxx", "hack", "placeholder"], location: "anywhere" },
 			],
 
-			// --- Blanket eslint-disable abuse (common in generated "fixes")
+			// --- Blanket eslint-disable abuse (silencing rules instead of fixing)
 			"@eslint-community/eslint-comments/no-unlimited-disable": "error",
 			"@eslint-community/eslint-comments/no-unused-disable": "error",
 			"@eslint-community/eslint-comments/require-description": [
@@ -69,7 +69,7 @@ export default [
 			],
 			"sonarjs/cognitive-complexity": ["warn", 15],
 
-			// --- Duplication (copy-paste is an AI signature)
+			// --- Duplication (catches copy-paste)
 			"sonarjs/no-duplicate-string": ["error", { threshold: 4 }],
 			"sonarjs/no-identical-functions": "error",
 

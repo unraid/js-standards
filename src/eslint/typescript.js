@@ -2,7 +2,7 @@
  * Concern: TypeScript type-safety.
  *
  * typescript-eslint strict-type-checked + stylistic, plus the extra type-safety
- * rules that most directly catch AI failure modes (unsafe `any`, needless
+ * rules that most directly catch runtime failure modes (unsafe `any`, needless
  * guards, `||` where `??` is meant, promise mishandling). Type-aware rules run
  * only on real source; plain JS/config files get type-checking switched off.
  *

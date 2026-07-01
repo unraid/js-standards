@@ -1,7 +1,7 @@
 {
   "name": "@unraid/js-standards",
   "version": "0.5.1",
-  "description": "Lime Technology shared JS/TS quality + anti-slop presets: ESLint (type-aware, strict), Prettier, tsconfig, and knip.",
+  "description": "Lime Technology shared JS/TS code-quality presets: ESLint (type-aware, strict), Oxlint, Prettier, tsconfig, and knip.",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -19,7 +19,7 @@
     "./eslint/nuxt": "./src/eslint/nuxt.js",
     "./eslint/worker": "./src/eslint/worker.js",
     "./eslint/typescript": "./src/eslint/typescript.js",
-    "./eslint/anti-slop": "./src/eslint/anti-slop.js",
+    "./eslint/quality": "./src/eslint/quality.js",
     "./eslint/vue": "./src/eslint/vue.js",
     "./eslint/cloudflare-workers": "./src/eslint/cloudflare-workers.js",
     "./eslint/testing": "./src/eslint/testing.js",
