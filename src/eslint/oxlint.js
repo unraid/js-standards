@@ -18,7 +18,11 @@
  * configs can never drift.
  */
 import { fileURLToPath } from "node:url";
-import { buildFromOxlintConfigFile } from "eslint-plugin-oxlint";
+// eslint-plugin-oxlint's ESM entry only exports `default`; the builders hang off
+// it as properties, so we destructure rather than named-import.
+import oxlintPlugin from "eslint-plugin-oxlint";
+
+const { buildFromOxlintConfigFile } = oxlintPlugin;
 
 const sharedOxlintConfig = fileURLToPath(new URL("../oxlint/base.json", import.meta.url));
 
