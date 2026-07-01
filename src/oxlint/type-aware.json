@@ -6,5 +6,11 @@
     "suspicious": "warn",
     "perf": "warn",
     "pedantic": "warn"
+  },
+  "rules": {
+    "require-unicode-regexp": "off",
+    "require-await": "off",
+    "typescript/prefer-readonly-parameter-types": "off",
+    "typescript/strict-boolean-expressions": "off"
   }
 }

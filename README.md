@@ -143,12 +143,19 @@ one version in the consumer:
 "eslint-plugin-import-x": "4.17.1"
 ```
 
-## Oxlint fast pre-pass
+## Linting architecture: ESLint authoritative + Oxlint pre-pass
 
-Oxlint (Rust) runs the syntactic subset **~300× faster** than the full ESLint
-pass (measured on community-apps-worker: **0.4s vs 135s**), and it parses `.vue`
-SFCs. Use it as a pre-pass for instant local feedback; keep ESLint authoritative
-for type-aware + Vue-template + anti-slop rules Oxlint can't do.
+**ESLint is the authoritative gate.** It's the only tool that covers everything
+we need: Vue `<template>` rules, sonarjs cognitive-complexity + duplication,
+deslop AI-comment-slop, and the full type-aware set including
+`no-unnecessary-condition` and `no-misused-promises`. It's slow (~135s on
+community-apps-worker) but complete — run it in CI and pre-push.
+
+**Oxlint is a fast pre-pass for local feedback.** It runs the syntactic subset
+**~300× faster** (0.4s vs 135s) and parses `.vue` SFCs — ideal for editor/save
+and pre-commit so you catch cheap mistakes instantly without waiting for the
+full ESLint run. It does NOT replace ESLint (it can't do Vue templates, sonarjs,
+deslop, or a couple of type-aware rules).
 
 **1. Consumer `.oxlintrc.json`** — extend the shared base. ⚠️ Oxlint does **not**
 support npm-package specifiers in `extends` (only file paths), so point at the
@@ -185,13 +192,13 @@ export default [
 Run `oxlint` on pre-commit/pre-push for sub-second feedback; run the full `lint`
 (both) in CI. Peer dep: `oxlint` (consumer installs it).
 
-### Type-aware Oxlint (experimental, but fast)
+### Optional: type-aware Oxlint (fast advisory)
 
-Oxlint's `--type-aware` mode runs the semantic rules (unsafe-`any` family,
-floating promises, `await-thenable`, `no-base-to-string`, …) on the Go
-TypeScript compiler (`tsgo`) — measured on community-apps-worker at **~2.8s vs
-ESLint's 135s** for the same class of checks, with **no monorepo crash**. Use the
-`oxlint/type-aware` preset (= `oxlint/base` + the `pedantic` category):
+If you want fast *type-aware* feedback too, Oxlint's `--type-aware` mode runs the
+semantic rules (unsafe-`any` family, floating promises, `await-thenable`,
+`no-base-to-string`, …) on the Go TypeScript compiler (`tsgo`) — measured at
+**~2.8s vs ESLint's 135s**, no monorepo crash. Use the `oxlint/type-aware` preset
+(= `oxlint/base` + `pedantic`, with the noisiest opt-in rules disabled):
 
 ```jsonc
 // .oxlintrc.json
@@ -201,14 +208,14 @@ ESLint's 135s** for the same class of checks, with **no monorepo crash**. Use th
 ```jsonc
 // package.json — needs the Go backend as a devDep
 "devDependencies": { "oxlint-tsgolint": "^0.24.0" },
-"scripts": { "lint:types": "oxlint --type-aware" }
+"scripts": { "lint:types:fast": "oxlint --type-aware" }
 ```
 
-**Coverage vs typescript-eslint (as of oxlint 1.72 / tsgolint 0.24):** covers the
-bulk of the type-safety rules, but **not yet** `no-unnecessary-condition` or
-`no-misused-promises` — keep ESLint authoritative for those (plus Vue-template
-and sonarjs/deslop rules) until they land. It's preview + pinned to a `tsgo` dev
-build, so treat it as a fast **advisory** gate, not the merge blocker, for now.
+This is a fast **advisory** for local use, not a replacement — ESLint stays the
+authoritative gate. Oxlint's type-aware set (oxlint 1.72 / tsgolint 0.24) covers
+the bulk of type-safety but **not** `no-unnecessary-condition` /
+`no-misused-promises`, and never the Vue/sonarjs/deslop rules. It's preview +
+pinned to a `tsgo` dev build.
 
 ## Why ESLint and not Biome / Oxlint (2026)
 
