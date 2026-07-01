@@ -1,6 +1,6 @@
 {
   "name": "@unraid/js-standards",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "Lime Technology shared JS/TS quality + anti-slop presets: ESLint (type-aware, strict), Prettier, tsconfig, and knip.",
   "license": "MIT",
   "type": "module",
