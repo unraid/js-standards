@@ -185,6 +185,31 @@ export default [
 Run `oxlint` on pre-commit/pre-push for sub-second feedback; run the full `lint`
 (both) in CI. Peer dep: `oxlint` (consumer installs it).
 
+### Type-aware Oxlint (experimental, but fast)
+
+Oxlint's `--type-aware` mode runs the semantic rules (unsafe-`any` family,
+floating promises, `await-thenable`, `no-base-to-string`, …) on the Go
+TypeScript compiler (`tsgo`) — measured on community-apps-worker at **~2.8s vs
+ESLint's 135s** for the same class of checks, with **no monorepo crash**. Use the
+`oxlint/type-aware` preset (= `oxlint/base` + the `pedantic` category):
+
+```jsonc
+// .oxlintrc.json
+{ "extends": ["./node_modules/@unraid/js-standards/src/oxlint/type-aware.json"] }
+```
+
+```jsonc
+// package.json — needs the Go backend as a devDep
+"devDependencies": { "oxlint-tsgolint": "^0.24.0" },
+"scripts": { "lint:types": "oxlint --type-aware" }
+```
+
+**Coverage vs typescript-eslint (as of oxlint 1.72 / tsgolint 0.24):** covers the
+bulk of the type-safety rules, but **not yet** `no-unnecessary-condition` or
+`no-misused-promises` — keep ESLint authoritative for those (plus Vue-template
+and sonarjs/deslop rules) until they land. It's preview + pinned to a `tsgo` dev
+build, so treat it as a fast **advisory** gate, not the merge blocker, for now.
+
 ## Why ESLint and not Biome / Oxlint (2026)
 
 The faster Rust linters are real and worth using — but not as the *base* for our
