@@ -1,0 +1,57 @@
+{
+  "name": "@unraid/js-standards",
+  "version": "0.1.0",
+  "description": "Lime Technology shared JS/TS quality + anti-slop presets: ESLint (type-aware, strict), Prettier, tsconfig, and knip.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./eslint/base": "./src/eslint/base.js",
+    "./eslint/nuxt": "./src/eslint/nuxt.js",
+    "./eslint/worker": "./src/eslint/worker.js",
+    "./eslint/globals": "./src/eslint/globals.js",
+    "./prettier": "./src/prettier/index.json",
+    "./tsconfig/base.json": "./src/tsconfig/base.json",
+    "./tsconfig/nuxt.json": "./src/tsconfig/nuxt.json",
+    "./tsconfig/worker.json": "./src/tsconfig/worker.json",
+    "./knip/base": "./src/knip/base.js"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.7.2",
+    "@eslint/js": "^10.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-deslop": "^0.3.6",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-sonarjs": "^4.1.0",
+    "eslint-plugin-unicorn": "^69.0.0",
+    "globals": "^17.7.0",
+    "typescript-eslint": "^8.62.1"
+  },
+  "peerDependencies": {
+    "@nuxt/eslint-config": ">=1.16.0",
+    "eslint": ">=10.4.0",
+    "typescript": ">=5.5.0"
+  },
+  "peerDependenciesMeta": {
+    "@nuxt/eslint-config": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^1.16.0",
+    "eslint": "^10.6.0",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.33.0"
+}
