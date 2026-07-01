@@ -10,15 +10,45 @@ instead of a dozen drifting ones.
 
 ## What's inside
 
+The ESLint config is split into **composable concerns**. The three ready-made
+presets (`base` / `nuxt` / `worker`) just stack the concerns in the right order
+and append Prettier last; pull individual concerns when you want finer control.
+
+**Presets (start here):**
+
+| Export | = concerns | For |
+| --- | --- | --- |
+| `eslint/base` | ignores + typescript + anti-slop + testing | Plain TS libs / Node packages |
+| `eslint/worker` | base + cloudflare-workers | Non-Nuxt Workers / services |
+| `eslint/nuxt` | base + cloudflare-workers + vue + webGUI globals | Nuxt 4 apps on Workers |
+
+**Concerns (compose your own):**
+
+| Export | Concern |
+| --- | --- |
+| `eslint/typescript` | Type-safety — strict-type-checked + stylistic, unsafe-any / promise / nullish rules |
+| `eslint/anti-slop` | Slop patterns — unicorn (tuned), sonarjs, eslint-comments, deslop, complexity/size budgets, duplication |
+| `eslint/vue` | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions |
+| `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards |
+| `eslint/testing` | Spec/fixture relaxations |
+| `eslint/ignores` | Shared build-artifact ignores |
+| `eslint/globals` | Raw globals maps (Workers + webGUI) |
+
+**Non-ESLint:**
+
 | Export | Purpose |
 | --- | --- |
-| `@unraid/js-standards/eslint/base` | Framework-agnostic, type-aware, anti-slop ESLint flat config |
-| `@unraid/js-standards/eslint/nuxt` | `base` + Nuxt 4 / Vue 3 + CF Workers globals |
-| `@unraid/js-standards/eslint/worker` | `base` + CF Workers globals (non-Nuxt) |
-| `@unraid/js-standards/prettier` | Shared Prettier config (single source of truth) |
-| `@unraid/js-standards/tsconfig/base.json` | Extreme-strict tsconfig base |
-| `@unraid/js-standards/tsconfig/nuxt.json` / `worker.json` | Framework variants |
-| `@unraid/js-standards/knip/base` | Shared knip dead-code baseline |
+| `prettier` | Shared Prettier config (single source of truth) |
+| `tsconfig/base.json` / `nuxt.json` / `worker.json` | Extreme-strict tsconfig + framework variants |
+| `knip/base` | Shared knip dead-code baseline |
+
+### Severity tiers
+
+Type-safety + correctness + duplication + eslint-disable-abuse rules are
+`error`. **Complexity / size budgets are `warn`** — you can't refactor an
+existing backlog in one PR, so gate new code first and flip to `error` per repo
+once the baseline is under budget. Pure-opinion rules that fight domain naming
+(`unicorn/name-replacements`, abbreviation nagging, etc.) are disabled outright.
 
 ## What the anti-slop rules catch
 

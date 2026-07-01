@@ -1,17 +1,10 @@
 /**
- * @unraid/js-standards — plain Cloudflare Worker / Node service preset.
+ * Public preset: worker — plain (non-Nuxt) Cloudflare Worker / Node service.
  *
- * The anti-slop base plus Workers runtime globals, for non-Nuxt packages
- * (standalone workers, shared libraries, lambdas).
+ * core + Cloudflare Workers concern, prettier last.
  */
-import base from "./base.js";
-import { cloudflareWorkerGlobals } from "./globals.js";
+import prettier from "eslint-config-prettier";
+import core from "./core.js";
+import cloudflareWorkers from "./cloudflare-workers.js";
 
-export default [
-	...base,
-	{
-		languageOptions: {
-			globals: { ...cloudflareWorkerGlobals },
-		},
-	},
-];
+export default [...core, ...cloudflareWorkers, prettier];
