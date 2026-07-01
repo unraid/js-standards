@@ -11,18 +11,17 @@
  *   export default { ...base, entry: [...base.entry, "server/index.ts"] };
  */
 
-/** @type {import("knip").KnipConfig} */
+/**
+ * Deliberately minimal: do NOT override `entry` / `project`. knip auto-detects
+ * Nuxt (and Cloudflare/wrangler) from the dependency graph and applies its
+ * framework plugins, which understand auto-imported components, pages, and
+ * server routes. Hardcoding entry globs disables that and produces false
+ * "unused file" reports. We only add shared ignores + a lenient default that
+ * repos tighten as their baseline gets clean.
+ *
+ * @type {import("knip").KnipConfig}
+ */
 const config = {
-	// Common Nuxt / Workers entry points; extend per repo as needed.
-	entry: [
-		"nuxt.config.ts",
-		"app.config.ts",
-		"app/**/pages/**/*.vue",
-		"server/**/routes/**/*.ts",
-		"server/**/api/**/*.ts",
-		"scripts/**/*.{ts,mjs,js}",
-	],
-	project: ["**/*.{ts,tsx,vue,mjs,js}"],
 	ignore: [
 		"**/*.generated.ts",
 		"**/worker-configuration.d.ts",
@@ -35,7 +34,7 @@ const config = {
 		// Type-only + tooling packages knip can't always trace through configs.
 		"@cloudflare/workers-types",
 	],
-	// Start lenient; tighten these to `false` per repo once the baseline is clean.
+	// Start lenient; flip to `false` per repo once the baseline is clean.
 	ignoreExportsUsedInFile: true,
 };
 
