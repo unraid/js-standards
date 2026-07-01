@@ -19,6 +19,11 @@
  * "unused file" reports. We only add shared ignores + a lenient default that
  * repos tighten as their baseline gets clean.
  *
+ * Nuxt 4 note: knip's Nuxt plugin does not yet treat the `app/` srcDir as
+ * entry by default, so Nuxt 4 repos should add their own entry hint, e.g.
+ *   entry: [...base.entry ?? [], 'app/**\/*.vue', 'app/**\/*.ts']
+ * to avoid false "unused file" reports for auto-imported components.
+ *
  * @type {import("knip").KnipConfig}
  */
 const config = {
