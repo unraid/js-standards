@@ -143,6 +143,48 @@ one version in the consumer:
 "eslint-plugin-import-x": "4.17.1"
 ```
 
+## Oxlint fast pre-pass
+
+Oxlint (Rust) runs the syntactic subset **~300× faster** than the full ESLint
+pass (measured on community-apps-worker: **0.4s vs 135s**), and it parses `.vue`
+SFCs. Use it as a pre-pass for instant local feedback; keep ESLint authoritative
+for type-aware + Vue-template + anti-slop rules Oxlint can't do.
+
+**1. Consumer `.oxlintrc.json`** — extend the shared base. ⚠️ Oxlint does **not**
+support npm-package specifiers in `extends` (only file paths), so point at the
+installed file via its stable pnpm symlink path:
+
+```jsonc
+// .oxlintrc.json
+{ "extends": ["./node_modules/@unraid/js-standards/src/oxlint/base.json"] }
+```
+
+**2. Dedupe ESLint** — append the oxlint concern last so ESLint skips what Oxlint
+already checked:
+
+```js
+import unraid from "@unraid/js-standards/eslint/nuxt";
+import oxlintDisable from "@unraid/js-standards/eslint/oxlint";
+
+export default [
+	...unraid,
+	...oxlintDisable(), // must be last
+];
+```
+
+**3. Wire the scripts** — Oxlint on pre-commit + first in CI; ESLint after:
+
+```jsonc
+"scripts": {
+	"lint:fast": "oxlint",
+	"lint": "oxlint && eslint .",
+	"lint:fix": "oxlint --fix && eslint . --fix"
+}
+```
+
+Run `oxlint` on pre-commit/pre-push for sub-second feedback; run the full `lint`
+(both) in CI. Peer dep: `oxlint` (consumer installs it).
+
 ## Why ESLint and not Biome / Oxlint (2026)
 
 The faster Rust linters are real and worth using — but not as the *base* for our
