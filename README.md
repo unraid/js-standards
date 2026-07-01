@@ -98,6 +98,74 @@ export default { ...base, entry: [...base.entry, "server/index.ts"] };
 Peer deps the consumer provides: `eslint >=10.4`, `typescript >=5.5`, and (for
 the Nuxt preset) `@nuxt/eslint-config`.
 
+## Gotchas
+
+### `no-restricted-imports` cannot be merged
+
+ESLint keeps only the **last** `no-restricted-imports` config for a given file —
+two blocks don't merge. The `cloudflare-workers` concern already sets one (to
+block Node builtins). If your repo needs its own restrictions too (e.g. banning
+parent-relative imports), combine both into a **single** block rather than
+adding a second one, or the concern's rule is silently overridden:
+
+```js
+{
+	rules: {
+		"no-restricted-imports": [
+			"error",
+			{
+				paths: [
+					{ name: "fs", message: "Not available on the Workers runtime." },
+					// …the rest of the cloudflare-workers paths…
+				],
+				patterns: [
+					{ group: ["../*"], message: "Use #aliases instead of parent-relative imports." },
+				],
+			},
+		],
+	},
+}
+```
+
+### Deduping plugins when layering on `@nuxt/eslint-config`
+
+The `nuxt`/`vue` presets pull Nuxt's bundled typescript-eslint / unicorn /
+import-x. Combined with our `typescript` + `anti-slop` concerns that can produce
+two copies of a plugin and ESLint throws *"Cannot redefine plugin"*. Pin them to
+one version in the consumer:
+
+```jsonc
+// package.json → pnpm.overrides
+"@typescript-eslint/eslint-plugin": "8.62.1",
+"@typescript-eslint/parser": "8.62.1",
+"@typescript-eslint/utils": "8.62.1",
+"eslint-plugin-unicorn": "69.0.0",
+"eslint-plugin-import-x": "4.17.1"
+```
+
+## Why ESLint and not Biome / Oxlint (2026)
+
+The faster Rust linters are real and worth using — but not as the *base* for our
+stack:
+
+- **Our repos are Nuxt/Vue.** Oxlint can't fully support `eslint-plugin-vue`
+  (Vue uses its own compiler / modified AST, so many rules can't run against SFC
+  templates), and Biome's Vue/Nuxt story is still thin. ESLint has the only
+  mature Vue/Nuxt configs.
+- **The anti-slop value lives in ESLint plugins.** unicorn, sonarjs, deslop, and
+  eslint-comments have no Biome/Oxlint equivalent.
+- **Type-aware rules are the core of this config.** typescript-eslint's
+  strict-type-checked is fully mature; Oxlint's `tsgolint` type-aware mode is
+  still preview with known memory/deadlock issues on large monorepos — and we
+  are a monorepo.
+
+**Planned optimization (not blocking):** add Oxlint as a fast *pre-pass*
+(pre-commit + first CI step) for the syntactic rules it already covers — it's
+50–100× faster and gives near-instant local feedback — with
+`eslint-plugin-oxlint` turning off the ESLint rules Oxlint handles to avoid
+double work. ESLint stays authoritative for type-aware + Vue + anti-slop. If
+that pre-pass lands, it ships here as an `oxlint/base` export.
+
 ## Rollout guidance
 
 New rules land **warn-first** for one minor, then flip to `error`. Pin an exact
