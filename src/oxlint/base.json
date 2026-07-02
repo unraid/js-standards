@@ -7,7 +7,7 @@
     "perf": "warn"
   },
   "rules": {
-    "eqeqeq": "error",
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
     "no-debugger": "error",
     "no-await-in-loop": "off",
     "import/no-unassigned-import": "off",

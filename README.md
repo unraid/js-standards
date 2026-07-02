@@ -31,6 +31,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `eslint/vue` | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions |
 | `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards |
 | `eslint/testing` | Spec/fixture relaxations |
+| `eslint/non-strict` | Escape hatch for repos compiled without `strictNullChecks` — disables the type-aware rules (and their behavior-rewriting autofixes) that are unsound there |
 | `eslint/ignores` | Shared build-artifact ignores |
 | `eslint/globals` | Raw globals maps (Workers + webGUI) |
 
@@ -41,6 +42,29 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `prettier` | Shared Prettier config (single source of truth) |
 | `tsconfig/base.json` / `nuxt.json` / `worker.json` | Extreme-strict tsconfig + framework variants |
 | `knip/base` | Shared knip dead-code baseline |
+
+### Repos without `strictNullChecks`
+
+Several type-aware rules in the presets are only sound when the consuming repo
+compiles with `strictNullChecks` (they self-report this at position 0:1 and
+then run anyway, treating optional properties as always-present). Their
+autofixes still apply — even for diagnostics grandfathered into an
+`eslint-suppressions.json` baseline — so a routine `--fix` can silently delete
+live destructuring defaults or strip `as` casts the real typechecker needs.
+
+If your repo sets `strict: false` (e.g. Nuxt's
+`typescript.tsConfig.compilerOptions.strict = false`), append the escape hatch
+after the preset:
+
+```js
+import unraid from "@unraid/js-standards/eslint/nuxt";
+import nonStrict from "@unraid/js-standards/eslint/non-strict";
+
+export default [...unraid, ...nonStrict /*, repo overrides */];
+```
+
+Remove it — and regain the extra coverage — when the repo turns
+`strictNullChecks` on.
 
 ### Severity tiers
 
