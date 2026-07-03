@@ -98,6 +98,34 @@ export default { ...base, entry: [...base.entry, "server/index.ts"] };
 Peer deps the consumer provides: `eslint >=10.4`, `typescript >=5.5`, and (for
 the Nuxt preset) `@nuxt/eslint-config`.
 
+## Compatibility: `strictNullChecks` is REQUIRED
+
+These presets are **incompatible with repos that compile without
+`strictNullChecks`**. There is no supported escape hatch — enable the flag.
+
+Several type-aware rules (`no-unnecessary-condition`,
+`prefer-nullish-coalescing`, `no-unnecessary-boolean-literal-compare`,
+`no-useless-default-assignment`, `no-unnecessary-type-assertion`,
+`no-unnecessary-type-conversion`, `sonarjs/different-types-comparison`) are
+only sound when `null`/`undefined` exist in the type system. Without the flag
+they treat every optional value as always-present — and their **autofixes
+still apply**, silently rewriting behavior. Observed in production use:
+`--fix` deleted a live destructuring default and stripped `as` casts the real
+typechecker requires, breaking typecheck from a lint run.
+
+How to know you're affected: each of these rules self-reports
+`This rule requires the 'strictNullChecks' compiler option` at position 0:1
+of every file. Treat that message as a **configuration error and fix the
+tsconfig** — do not baseline it away with `--suppress-all`, which is exactly
+how it goes unnoticed.
+
+The shared `tsconfig/*` exports already enable strict mode. Nuxt apps that
+override `typescript.tsConfig.compilerOptions` must keep at least
+`strictNullChecks: true`. Migration is cheaper than it looks: unraid/account
+enabled the flag with 161 mechanical fixes, and its lint-suppressions
+baseline shrank 36% because most of the "debt" was false findings from the
+unsound configuration (unraid/account#1564).
+
 ## Gotchas
 
 ### `no-restricted-imports` cannot be merged

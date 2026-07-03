@@ -7,6 +7,11 @@
  * only on real source; plain JS/config files get type-checking switched off.
  *
  * This concern is framework-agnostic — a plain TS library can consume it alone.
+ *
+ * REQUIRES `strictNullChecks` in the consumer's tsconfig. Without it, several
+ * of these rules are unsound and their autofixes rewrite behavior; the rules
+ * self-report the missing flag at 0:1 of every file — treat that as a
+ * configuration error, not lintable debt. See README "Compatibility".
  */
 import tseslint from "typescript-eslint";
 import { TS_SOURCE, JS_FILES } from "./globs.js";
