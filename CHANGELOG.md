@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/unraid/js-standards/compare/v1.0.0...v1.1.0) (2026-07-03)
+
+
+### Features
+
+* **eslint:** add opt-in strict-size preset; two-tier function length ([#6](https://github.com/unraid/js-standards/issues/6)) ([22604fb](https://github.com/unraid/js-standards/commit/22604fb9a78ee01ce573fe8f7e65f19041bb7c61))
+* **eslint:** require strictNullChecks; align oxlint eqeqeq with eslint ([#4](https://github.com/unraid/js-standards/issues/4)) ([58ea5fc](https://github.com/unraid/js-standards/commit/58ea5fc5889ab050e71910d3e5e95b9781270c02))
+
 ## 1.0.0 (2026-07-01)
 
 
