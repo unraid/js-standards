@@ -31,6 +31,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `eslint/vue` | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions |
 | `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards |
 | `eslint/testing` | Spec/fixture relaxations |
+| `eslint/strict-size` | Opt-in: promotes `max-lines` + `max-lines-per-function` from `warn` to `error` (append after a preset once the repo is under budget) |
 | `eslint/ignores` | Shared build-artifact ignores |
 | `eslint/globals` | Raw globals maps (Workers + webGUI) |
 
@@ -49,6 +50,23 @@ Type-safety + correctness + duplication + eslint-disable-abuse rules are
 existing backlog in one PR, so gate new code first and flip to `error` per repo
 once the baseline is under budget. Pure-opinion rules that fight domain naming
 (`unicorn/name-replacements`, abbreviation nagging, etc.) are disabled outright.
+
+Function length is two-tier: the quality concern **warns at 50 lines** (the
+"fits on a screen" nudge), and `eslint/strict-size` **errors at 80** — a hard
+stop for runaway functions without red-walling the 50–80 grey zone. Files use one
+tier (400, warn → error) since splitting a file is mechanical.
+
+Once a repo is under the size budget, lock it in by appending `eslint/strict-size`,
+which promotes `max-lines` + `max-lines-per-function` to `error` (config/scripts
+stay exempt). Cognitive/cyclomatic complexity intentionally stays `warn` — hard-
+gating it rewards extracting nonsense helpers to beat the metric.
+
+```js
+import base from "@unraid/js-standards/eslint/base";
+import strictSize from "@unraid/js-standards/eslint/strict-size";
+
+export default [...base, ...strictSize];
+```
 
 ## What the quality rules catch
 

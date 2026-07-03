@@ -20,6 +20,7 @@
     "./eslint/worker": "./src/eslint/worker.js",
     "./eslint/typescript": "./src/eslint/typescript.js",
     "./eslint/quality": "./src/eslint/quality.js",
+    "./eslint/strict-size": "./src/eslint/strict-size.js",
     "./eslint/vue": "./src/eslint/vue.js",
     "./eslint/cloudflare-workers": "./src/eslint/cloudflare-workers.js",
     "./eslint/testing": "./src/eslint/testing.js",

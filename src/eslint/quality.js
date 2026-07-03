@@ -56,16 +56,20 @@ export default [
 			],
 
 			// --- Complexity / size budgets: warn + ratchet (gate new code, don't
-			//     red-wall the existing backlog). Flip to "error" per repo once
-			//     the baseline is under budget.
+			//     red-wall the existing backlog). Once a repo is under budget,
+			//     append the "eslint/strict-size" fragment to promote the two
+			//     size rules to "error"; complexity stays warn by design.
 			complexity: ["warn", { max: 12 }],
 			"max-depth": ["warn", 4],
 			"max-nested-callbacks": ["warn", 3],
 			"max-params": ["warn", 4],
 			"max-lines": ["warn", { max: 400, skipBlankLines: true, skipComments: true }],
+			// Two-tier function length: warn at 50 (ESLint's default, the "fits on
+			// a screen" nudge most teams consider healthy); the strict-size
+			// fragment hard-errors at the 80-line runaway ceiling.
 			"max-lines-per-function": [
 				"warn",
-				{ max: 80, skipBlankLines: true, skipComments: true, IIFEs: true },
+				{ max: 50, skipBlankLines: true, skipComments: true, IIFEs: true },
 			],
 			"sonarjs/cognitive-complexity": ["warn", 15],
 
