@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/unraid/js-standards/compare/v1.1.0...v1.1.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* **eslint:** disable premature unicorn/prefer-uint8array-base64 ([#7](https://github.com/unraid/js-standards/issues/7)) ([97d6364](https://github.com/unraid/js-standards/commit/97d63646da3490d1d2be116c5403f9f756d1b4e5))
+
 ## [1.1.0](https://github.com/unraid/js-standards/compare/v1.0.0...v1.1.0) (2026-07-03)
 
 
