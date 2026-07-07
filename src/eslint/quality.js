@@ -95,6 +95,15 @@ export default [
 			"unicorn/no-array-reduce": "off",
 			"unicorn/prefer-ternary": "off",
 			"unicorn/no-useless-undefined": "off",
+
+			// --- Unicorn: modernization rule that outruns our runtime. The
+			//     suggested API isn't shipped on our Node target yet, so its
+			//     autofix rewrites working code into a call that compiles but
+			//     THROWS at runtime. `Uint8Array#toBase64()`/`fromBase64()` are
+			//     still TC39 Stage-3 and absent on Node 24 (the property is
+			//     `undefined`), so `Buffer.from(x).toString("base64")` stays the
+			//     only working call. Re-enable once the runtime ships them.
+			"unicorn/prefer-uint8array-base64": "off",
 		},
 	},
 ];
