@@ -21,11 +21,12 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
+      # Config lives in release-please-config.json: every conventional commit
+      # type is a visible changelog section, so chore/refactor/docs merges cut
+      # a patch release too (feat still bumps minor, breaking still major).
       - uses: googleapis/release-please-action@v4
         if: github.ref == 'refs/heads/main'
         id: release
-        with:
-          release-type: node
 
   build:
     runs-on: ubuntu-latest
