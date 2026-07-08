@@ -83,6 +83,12 @@ export default [...base, ...strictSize];
 - **Escape hatches** — `eslint-comments` bans blanket / undescribed
   `eslint-disable`.
 - **Redundant comments** — deslop flags comments that just restate the code.
+- **Nuxt data fetching** (nuxt/vue preset) — reserves `$fetch()` for
+  user-triggered requests (event handlers, mutations) and flags data-loading
+  `$fetch()` — a top-level `await $fetch()` in `<script setup>` or `$fetch()`
+  inside a lifecycle hook — in favor of `useFetch()`/`useAsyncData()` (SSR payload
+  transfer, request dedupe, consistent pending/error state). `$fetch()` inside
+  function bodies is left alone.
 
 ## Usage
 
@@ -147,7 +153,7 @@ unsound configuration (unraid/account#1564).
 
 ## Gotchas
 
-### `no-restricted-imports` cannot be merged
+### `no-restricted-imports` / `no-restricted-syntax` cannot be merged
 
 ESLint keeps only the **last** `no-restricted-imports` config for a given file —
 two blocks don't merge. The `cloudflare-workers` concern already sets one (to
@@ -173,6 +179,11 @@ adding a second one, or the concern's rule is silently overridden:
 	},
 }
 ```
+
+The same caveat applies to `no-restricted-syntax`: the `vue` concern sets it (on
+`**/*.vue`) to steer data-loading `$fetch()` toward `useFetch()`/`useAsyncData()`.
+If a consuming repo adds its own `no-restricted-syntax`, fold those selectors in
+rather than replacing the block.
 
 ### Deduping plugins when layering on `@nuxt/eslint-config`
 
