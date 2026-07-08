@@ -15,6 +15,35 @@ import { createConfigForNuxt } from "@nuxt/eslint-config/flat";
 
 const nuxtConfigs = await createConfigForNuxt().toConfigs();
 
+const FETCH_IN_SETUP_MESSAGE =
+	"Load data with useFetch()/useAsyncData(), not a top-level await $fetch() in setup. Reserve $fetch() for user-triggered requests (event handlers, mutations).";
+
+/**
+ * `no-restricted-syntax` selectors that steer data-loading `$fetch()` toward
+ * `useFetch()`/`useAsyncData()`. Only the two data-loading positions are flagged
+ * — a top-level `await $fetch()` in `<script setup>` and `$fetch()` inside a
+ * lifecycle hook — so `$fetch()` inside function bodies (event handlers,
+ * mutations) is left alone. Exported so the rule can be unit-tested.
+ */
+export const dataLoadingFetchRestrictions = [
+	{
+		selector:
+			"CallExpression[callee.name=/^(onMounted|onBeforeMount|onServerPrefetch)$/] CallExpression[callee.name='$fetch']",
+		message:
+			"Load data with useFetch()/useAsyncData(), not $fetch() in a lifecycle hook. Reserve $fetch() for user-triggered requests (event handlers, mutations).",
+	},
+	{
+		selector:
+			"Program > VariableDeclaration > VariableDeclarator > AwaitExpression > CallExpression[callee.name='$fetch']",
+		message: FETCH_IN_SETUP_MESSAGE,
+	},
+	{
+		selector:
+			"Program > ExpressionStatement > AwaitExpression > CallExpression[callee.name='$fetch']",
+		message: FETCH_IN_SETUP_MESSAGE,
+	},
+];
+
 export default [
 	...nuxtConfigs,
 	{
@@ -55,27 +84,7 @@ export default [
 		// consuming repo that adds its own must fold these selectors in (see README).
 		files: ["**/*.vue"],
 		rules: {
-			"no-restricted-syntax": [
-				"error",
-				{
-					selector:
-						"CallExpression[callee.name=/^(onMounted|onBeforeMount|onServerPrefetch)$/] CallExpression[callee.name='$fetch']",
-					message:
-						"Load data with useFetch()/useAsyncData(), not $fetch() in a lifecycle hook. Reserve $fetch() for user-triggered requests (event handlers, mutations).",
-				},
-				{
-					selector:
-						"Program > VariableDeclaration > VariableDeclarator > AwaitExpression > CallExpression[callee.name='$fetch']",
-					message:
-						"Load data with useFetch()/useAsyncData(), not a top-level await $fetch() in setup. Reserve $fetch() for user-triggered requests (event handlers, mutations).",
-				},
-				{
-					selector:
-						"Program > ExpressionStatement > AwaitExpression > CallExpression[callee.name='$fetch']",
-					message:
-						"Load data with useFetch()/useAsyncData(), not a top-level await $fetch() in setup. Reserve $fetch() for user-triggered requests (event handlers, mutations).",
-				},
-			],
+			"no-restricted-syntax": ["error", ...dataLoadingFetchRestrictions],
 		},
 	},
 ];
