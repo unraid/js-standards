@@ -7,6 +7,7 @@ export const ignorePatterns = [
 	"**/node_modules/**",
 	"**/dist/**",
 	"**/build/**",
+	"**/runtime/**",
 	"**/.output/**",
 	"**/.nuxt/**",
 	"**/.wrangler/**",
