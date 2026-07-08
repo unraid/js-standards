@@ -18,6 +18,7 @@
     "./eslint/base": "./src/eslint/base.js",
     "./eslint/nuxt": "./src/eslint/nuxt.js",
     "./eslint/worker": "./src/eslint/worker.js",
+    "./eslint/node": "./src/eslint/node.js",
     "./eslint/typescript": "./src/eslint/typescript.js",
     "./eslint/quality": "./src/eslint/quality.js",
     "./eslint/strict-size": "./src/eslint/strict-size.js",
@@ -31,6 +32,7 @@
     "./tsconfig/base.json": "./src/tsconfig/base.json",
     "./tsconfig/nuxt.json": "./src/tsconfig/nuxt.json",
     "./tsconfig/worker.json": "./src/tsconfig/worker.json",
+    "./tsconfig/node.json": "./src/tsconfig/node.json",
     "./knip/base": "./src/knip/base.js",
     "./oxlint/base": "./src/oxlint/base.json",
     "./oxlint/type-aware": "./src/oxlint/type-aware.json"

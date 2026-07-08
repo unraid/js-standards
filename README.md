@@ -20,6 +20,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | --- | --- | --- |
 | `eslint/base` | ignores + typescript + quality + testing | Plain TS libs / Node packages |
 | `eslint/worker` | base + cloudflare-workers | Non-Nuxt Workers / services |
+| `eslint/node` | base + Node runtime globals (no Workers builtin bans) | AWS Lambda handlers / Node services & CLIs |
 | `eslint/nuxt` | base + cloudflare-workers + vue + webGUI globals | Nuxt 4 apps on Workers |
 
 **Concerns (compose your own):**
@@ -40,7 +41,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | Export | Purpose |
 | --- | --- |
 | `prettier` | Shared Prettier config (single source of truth) |
-| `tsconfig/base.json` / `nuxt.json` / `worker.json` | Extreme-strict tsconfig + framework variants |
+| `tsconfig/base.json` / `nuxt.json` / `worker.json` / `node.json` | Extreme-strict tsconfig + framework variants (`node.json` = ES2022 + Bundler resolution + `@types/node`, for esbuild-bundled Lambdas) |
 | `knip/base` | Shared knip dead-code baseline |
 
 ### Severity tiers
