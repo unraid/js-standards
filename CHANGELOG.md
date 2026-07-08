@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/unraid/js-standards/compare/js-standards-v1.2.0...js-standards-v1.3.0) (2026-07-08)
+
+
+### Features
+
+* **eslint:** steer data-loading $fetch to useFetch/useAsyncData in Nuxt SFCs ([#15](https://github.com/unraid/js-standards/issues/15)) ([75507b1](https://github.com/unraid/js-standards/commit/75507b1622e00f861d25b5aad63a068c6c113c76))
+
 ## [1.2.0](https://github.com/unraid/js-standards/compare/js-standards-v1.1.1...js-standards-v1.2.0) (2026-07-08)
 
 
