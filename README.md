@@ -97,36 +97,29 @@ Prefer framework-native styles first: Vue/Nuxt component CSS belongs in
 layer, and packageable UI primitives should use the styling API native to that
 component system.
 
-When a Worker or server-rendered helper must generate CSS from JS/TS, keep it
-readable in source:
+When a Worker or server-rendered helper must include page-specific CSS, keep the
+source as a real stylesheet when the build tool supports it:
 
-- Put the stylesheet in a named module-level constant, not inside a render
-  function body.
-- Use `String.raw` template literals for multiline CSS.
+- Put page styles in a colocated `.css` file and import it as raw text when the
+  response needs inline `<style>` output.
+- Use a regular stylesheet route/static asset when the app already has an asset
+  pipeline and the extra request/cache boundary is desirable.
+- Use SCSS only in repos that already compile SCSS; do not add Sass for one
+  generated page.
 - Write normal formatted CSS: one selector per block, one declaration per line,
   blank lines between rule groups, and expanded `@media` blocks.
 - Group design tokens/custom properties at the top, including theme overrides.
+- If a build tool cannot import a CSS file, use a named module-level
+  `String.raw` template as the fallback. Do not put stylesheet blobs inside
+  render function bodies.
 - Do not commit minified or one-line CSS blobs unless the file is generated.
 
 ```ts
-const FORM_CSS = String.raw`
-  :root {
-    --form-bg: #ffffff;
-    --form-text: #111827;
-  }
+import formCss from "./form.css?raw";
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --form-bg: #0f172a;
-      --form-text: #f8fafc;
-    }
-  }
-
-  .form-shell {
-    background: var(--form-bg);
-    color: var(--form-text);
-  }
-`;
+export function renderFormHead(): string {
+	return `<style>${formCss}</style>`;
+}
 ```
 
 ## Usage
