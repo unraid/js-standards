@@ -90,6 +90,45 @@ export default [...base, ...strictSize];
   transfer, request dedupe, consistent pending/error state). `$fetch()` inside
   function bodies is left alone.
 
+## CSS conventions
+
+Prefer framework-native styles first: Vue/Nuxt component CSS belongs in
+`<style>` blocks, shared app styling belongs in the repo's stylesheet/Tailwind
+layer, and packageable UI primitives should use the styling API native to that
+component system.
+
+When a Worker or server-rendered helper must generate CSS from JS/TS, keep it
+readable in source:
+
+- Put the stylesheet in a named module-level constant, not inside a render
+  function body.
+- Use `String.raw` template literals for multiline CSS.
+- Write normal formatted CSS: one selector per block, one declaration per line,
+  blank lines between rule groups, and expanded `@media` blocks.
+- Group design tokens/custom properties at the top, including theme overrides.
+- Do not commit minified or one-line CSS blobs unless the file is generated.
+
+```ts
+const FORM_CSS = String.raw`
+  :root {
+    --form-bg: #ffffff;
+    --form-text: #111827;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --form-bg: #0f172a;
+      --form-text: #f8fafc;
+    }
+  }
+
+  .form-shell {
+    background: var(--form-bg);
+    color: var(--form-text);
+  }
+`;
+```
+
 ## Usage
 
 ```js
