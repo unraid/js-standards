@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+dist/
+
+CHANGELOG.md
+pnpm-lock.yaml
+.release-please-manifest.json
+release-please-config.json

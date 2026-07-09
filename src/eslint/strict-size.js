@@ -30,22 +30,25 @@
 import { TOOLING_FILES } from "./globs.js";
 
 export default [
-	{
-		rules: {
-			"max-lines": ["error", { max: 400, skipBlankLines: true, skipComments: true }],
-			"max-lines-per-function": [
-				"error",
-				{ max: 80, skipBlankLines: true, skipComments: true, IIFEs: true },
-			],
-		},
-	},
-	{
-		// Config / scripts legitimately run long — keep the quality concern's
-		// tooling exception intact after promoting the budgets to error.
-		files: TOOLING_FILES,
-		rules: {
-			"max-lines": "off",
-			"max-lines-per-function": "off",
-		},
-	},
+  {
+    rules: {
+      "max-lines": [
+        "error",
+        { max: 400, skipBlankLines: true, skipComments: true },
+      ],
+      "max-lines-per-function": [
+        "error",
+        { max: 80, skipBlankLines: true, skipComments: true, IIFEs: true },
+      ],
+    },
+  },
+  {
+    // Config / scripts legitimately run long — keep the quality concern's
+    // tooling exception intact after promoting the budgets to error.
+    files: TOOLING_FILES,
+    rules: {
+      "max-lines": "off",
+      "max-lines-per-function": "off",
+    },
+  },
 ];

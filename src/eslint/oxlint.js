@@ -24,7 +24,9 @@ import oxlintPlugin from "eslint-plugin-oxlint";
 
 const { buildFromOxlintConfigFile } = oxlintPlugin;
 
-const sharedOxlintConfig = fileURLToPath(new URL("../oxlint/base.json", import.meta.url));
+const sharedOxlintConfig = fileURLToPath(
+  new URL("../oxlint/base.json", import.meta.url),
+);
 
 /**
  * @param {string} [oxlintConfigPath] Path to the oxlint config whose enabled
@@ -32,5 +34,5 @@ const sharedOxlintConfig = fileURLToPath(new URL("../oxlint/base.json", import.m
  * @returns {import("eslint").Linter.Config[]}
  */
 export default function oxlintDisable(oxlintConfigPath = sharedOxlintConfig) {
-	return buildFromOxlintConfigFile(oxlintConfigPath);
+  return buildFromOxlintConfigFile(oxlintConfigPath);
 }

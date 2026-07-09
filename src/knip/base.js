@@ -27,20 +27,20 @@
  * @type {import("knip").KnipConfig}
  */
 const config = {
-	ignore: [
-		"**/*.generated.ts",
-		"**/worker-configuration.d.ts",
-		"**/.nuxt/**",
-		"**/.output/**",
-		"**/.wrangler/**",
-		"**/coverage/**",
-	],
-	ignoreDependencies: [
-		// Type-only + tooling packages knip can't always trace through configs.
-		"@cloudflare/workers-types",
-	],
-	// Start lenient; flip to `false` per repo once the baseline is clean.
-	ignoreExportsUsedInFile: true,
+  ignore: [
+    "**/*.generated.ts",
+    "**/worker-configuration.d.ts",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/.wrangler/**",
+    "**/coverage/**",
+  ],
+  ignoreDependencies: [
+    // Type-only + tooling packages knip can't always trace through configs.
+    "@cloudflare/workers-types",
+  ],
+  // Start lenient; flip to `false` per repo once the baseline is clean.
+  ignoreExportsUsedInFile: true,
 };
 
 export default config;

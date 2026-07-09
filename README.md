@@ -16,33 +16,33 @@ and append Prettier last; pull individual concerns when you want finer control.
 
 **Presets (start here):**
 
-| Export | = concerns | For |
-| --- | --- | --- |
-| `eslint/base` | ignores + typescript + quality + testing | Plain TS libs / Node packages |
-| `eslint/worker` | base + cloudflare-workers | Non-Nuxt Workers / services |
-| `eslint/node` | base + Node runtime globals (no Workers builtin bans) | AWS Lambda handlers / Node services & CLIs |
-| `eslint/nuxt` | base + cloudflare-workers + vue + webGUI globals | Nuxt 4 apps on Workers |
+| Export          | = concerns                                            | For                                        |
+| --------------- | ----------------------------------------------------- | ------------------------------------------ |
+| `eslint/base`   | ignores + typescript + quality + testing              | Plain TS libs / Node packages              |
+| `eslint/worker` | base + cloudflare-workers                             | Non-Nuxt Workers / services                |
+| `eslint/node`   | base + Node runtime globals (no Workers builtin bans) | AWS Lambda handlers / Node services & CLIs |
+| `eslint/nuxt`   | base + cloudflare-workers + vue + webGUI globals      | Nuxt 4 apps on Workers                     |
 
 **Concerns (compose your own):**
 
-| Export | Concern |
-| --- | --- |
-| `eslint/typescript` | Type-safety — strict-type-checked + stylistic, unsafe-any / promise / nullish rules |
-| `eslint/quality` | Quality patterns — unicorn (tuned), sonarjs, eslint-comments, deslop, complexity/size budgets, duplication |
-| `eslint/vue` | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions |
-| `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards |
-| `eslint/testing` | Spec/fixture relaxations |
-| `eslint/strict-size` | Opt-in: promotes `max-lines` + `max-lines-per-function` from `warn` to `error` (append after a preset once the repo is under budget) |
-| `eslint/ignores` | Shared build-artifact ignores |
-| `eslint/globals` | Raw globals maps (Workers + webGUI) |
+| Export                      | Concern                                                                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `eslint/typescript`         | Type-safety — strict-type-checked + stylistic, unsafe-any / promise / nullish rules                                                  |
+| `eslint/quality`            | Quality patterns — unicorn (tuned), sonarjs, eslint-comments, deslop, complexity/size budgets, duplication                           |
+| `eslint/vue`                | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions                                                                  |
+| `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards                                                                                     |
+| `eslint/testing`            | Spec/fixture relaxations                                                                                                             |
+| `eslint/strict-size`        | Opt-in: promotes `max-lines` + `max-lines-per-function` from `warn` to `error` (append after a preset once the repo is under budget) |
+| `eslint/ignores`            | Shared build-artifact ignores                                                                                                        |
+| `eslint/globals`            | Raw globals maps (Workers + webGUI)                                                                                                  |
 
 **Non-ESLint:**
 
-| Export | Purpose |
-| --- | --- |
-| `prettier` | Shared Prettier config (single source of truth) |
+| Export                                                           | Purpose                                                                                                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `prettier`                                                       | Shared Prettier config for JS/TS, JSON, Markdown, CSS, and SCSS (single source of truth)                                              |
 | `tsconfig/base.json` / `nuxt.json` / `worker.json` / `node.json` | Extreme-strict tsconfig + framework variants (`node.json` = ES2022 + Bundler resolution + `@types/node`, for esbuild-bundled Lambdas) |
-| `knip/base` | Shared knip dead-code baseline |
+| `knip/base`                                                      | Shared knip dead-code baseline                                                                                                        |
 
 ### Severity tiers
 
@@ -118,7 +118,7 @@ source as a real stylesheet when the build tool supports it:
 import formCss from "./form.css?raw";
 
 export function renderFormHead(): string {
-	return `<style>${formCss}</style>`;
+  return `<style>${formCss}</style>`;
 }
 ```
 
@@ -129,17 +129,25 @@ export function renderFormHead(): string {
 import unraid from "@unraid/js-standards/eslint/nuxt";
 
 export default [
-	...unraid,
-	{
-		// repo-specific overrides only
-	},
+  ...unraid,
+  {
+    // repo-specific overrides only
+  },
 ];
 ```
 
 ```jsonc
 // package.json
-"prettier": "@unraid/js-standards/prettier"
+"prettier": "@unraid/js-standards/prettier",
+"scripts": {
+	"format": "prettier . --write",
+	"format:check": "prettier . --check"
+}
 ```
+
+For repos with existing formatting debt, wire `format:check` to the cleaned
+paths first, then broaden it as the repo is formatted. Do not mix Prettier into
+`lint` until the checked paths are under budget.
 
 ```jsonc
 // tsconfig.json
@@ -221,7 +229,7 @@ rather than replacing the block.
 
 The `nuxt`/`vue` presets pull Nuxt's bundled typescript-eslint / unicorn /
 import-x. Combined with our `typescript` + `quality` concerns that can produce
-two copies of a plugin and ESLint throws *"Cannot redefine plugin"*. Pin them to
+two copies of a plugin and ESLint throws _"Cannot redefine plugin"_. Pin them to
 one version in the consumer:
 
 ```jsonc
@@ -264,8 +272,8 @@ import unraid from "@unraid/js-standards/eslint/nuxt";
 import oxlintDisable from "@unraid/js-standards/eslint/oxlint";
 
 export default [
-	...unraid,
-	...oxlintDisable(), // must be last
+  ...unraid,
+  ...oxlintDisable(), // must be last
 ];
 ```
 
@@ -284,7 +292,7 @@ Run `oxlint` on pre-commit/pre-push for sub-second feedback; run the full `lint`
 
 ### Optional: type-aware Oxlint (fast advisory)
 
-If you want fast *type-aware* feedback too, Oxlint's `--type-aware` mode runs the
+If you want fast _type-aware_ feedback too, Oxlint's `--type-aware` mode runs the
 semantic rules (unsafe-`any` family, floating promises, `await-thenable`,
 `no-base-to-string`, …) on the Go TypeScript compiler (`tsgo`) — measured at
 **~2.8s vs ESLint's 135s**, no monorepo crash. Use the `oxlint/type-aware` preset
@@ -292,7 +300,9 @@ semantic rules (unsafe-`any` family, floating promises, `await-thenable`,
 
 ```jsonc
 // .oxlintrc.json
-{ "extends": ["./node_modules/@unraid/js-standards/src/oxlint/type-aware.json"] }
+{
+  "extends": ["./node_modules/@unraid/js-standards/src/oxlint/type-aware.json"],
+}
 ```
 
 ```jsonc
@@ -309,7 +319,7 @@ pinned to a `tsgo` dev build.
 
 ## Why ESLint and not Biome / Oxlint (2026)
 
-The faster Rust linters are real and worth using — but not as the *base* for our
+The faster Rust linters are real and worth using — but not as the _base_ for our
 stack:
 
 - **Our repos are Nuxt/Vue.** Oxlint can't fully support `eslint-plugin-vue`
@@ -323,7 +333,7 @@ stack:
   still preview with known memory/deadlock issues on large monorepos — and we
   are a monorepo.
 
-**Planned optimization (not blocking):** add Oxlint as a fast *pre-pass*
+**Planned optimization (not blocking):** add Oxlint as a fast _pre-pass_
 (pre-commit + first CI step) for the syntactic rules it already covers — it's
 50–100× faster and gives near-instant local feedback — with
 `eslint-plugin-oxlint` turning off the ESLint rules Oxlint handles to avoid

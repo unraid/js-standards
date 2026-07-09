@@ -11,13 +11,13 @@ import vue from "./vue.js";
 import { webguiGlobals } from "./globals.js";
 
 export default [
-	...core,
-	...cloudflareWorkers,
-	...vue,
-	{
-		languageOptions: {
-			globals: { ...webguiGlobals },
-		},
-	},
-	prettier,
+  ...core,
+  ...cloudflareWorkers,
+  ...vue,
+  {
+    languageOptions: {
+      globals: { ...webguiGlobals },
+    },
+  },
+  prettier,
 ];
