@@ -4,18 +4,18 @@
  * repo's own `ignores`) and as a ready flat-config block.
  */
 export const ignorePatterns = [
-	"**/node_modules/**",
-	"**/dist/**",
-	"**/build/**",
-	"**/runtime/**",
-	"**/.output/**",
-	"**/.nuxt/**",
-	"**/.wrangler/**",
-	"**/.vite/**",
-	"**/coverage/**",
-	"**/*.generated.ts",
-	"**/worker-configuration.d.ts",
-	"**/*.d.ts",
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/build/**",
+  "**/runtime/**",
+  "**/.output/**",
+  "**/.nuxt/**",
+  "**/.wrangler/**",
+  "**/.vite/**",
+  "**/coverage/**",
+  "**/*.generated.ts",
+  "**/worker-configuration.d.ts",
+  "**/*.d.ts",
 ];
 
 export default [{ ignores: ignorePatterns }];

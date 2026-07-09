@@ -38,6 +38,8 @@
     "./oxlint/type-aware": "./src/oxlint/type-aware.json"
   },
   "scripts": {
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "eslint . && node --test \"test/**/*.test.mjs\"",
@@ -53,6 +55,7 @@
     "eslint-plugin-sonarjs": "^4.1.0",
     "eslint-plugin-unicorn": "^69.0.0",
     "globals": "^17.7.0",
+    "prettier": "^3.9.4",
     "typescript-eslint": "^8.62.1"
   },
   "peerDependencies": {

@@ -11,16 +11,16 @@ import testing from "./testing.js";
 import { TOOLING_FILES } from "./globs.js";
 
 export default [
-	...ignores,
-	...typescript,
-	...quality,
-	...testing,
-	{
-		files: TOOLING_FILES,
-		rules: {
-			"no-console": "off",
-			"max-lines": "off",
-			"max-lines-per-function": "off",
-		},
-	},
+  ...ignores,
+  ...typescript,
+  ...quality,
+  ...testing,
+  {
+    files: TOOLING_FILES,
+    rules: {
+      "no-console": "off",
+      "max-lines": "off",
+      "max-lines-per-function": "off",
+    },
+  },
 ];
