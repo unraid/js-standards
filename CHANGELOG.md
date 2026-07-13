@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.1](https://github.com/unraid/js-standards/compare/js-standards-v1.3.0...js-standards-v1.3.1) (2026-07-13)
+
+
+### Bug Fixes
+
+* **eslint:** resolve type-import rule conflict by pinning all three to inline ([#19](https://github.com/unraid/js-standards/issues/19)) ([52bfb2b](https://github.com/unraid/js-standards/commit/52bfb2bc2e4245a8afb3eb1f5ca683b0eacd8d19))
+
+
+### Documentation
+
+* add CSS conventions ([#17](https://github.com/unraid/js-standards/issues/17)) ([bfc0fe9](https://github.com/unraid/js-standards/commit/bfc0fe93f61f426fe6662b746bd093a86bd35d4f))
+
 ## [1.3.0](https://github.com/unraid/js-standards/compare/js-standards-v1.2.0...js-standards-v1.3.0) (2026-07-08)
 
 
