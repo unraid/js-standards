@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/unraid/js-standards/compare/js-standards-v1.3.2...js-standards-v1.4.0) (2026-07-13)
+
+
+### Features
+
+* **stylelint:** add shared Stylelint configs for CSS + design tokens ([#22](https://github.com/unraid/js-standards/issues/22)) ([6f8fafb](https://github.com/unraid/js-standards/commit/6f8fafbc7bff862b45ecc653fb14e5f1797a2406))
+
 ## [1.3.2](https://github.com/unraid/js-standards/compare/js-standards-v1.3.1...js-standards-v1.3.2) (2026-07-13)
 
 
