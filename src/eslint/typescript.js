@@ -31,15 +31,7 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-non-null-assertion": "error",
-      // `inline-type-imports` fixStyle keeps the autofix aligned with
-      // `import-x/no-duplicates` (prefer-inline) and
-      // `import-x/consistent-type-specifier-style` (prefer-inline) in
-      // quality.js, so the three rules converge on `import { a, type B }`
-      // instead of fighting over a separate `import type` statement.
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        { prefer: "type-imports", fixStyle: "inline-type-imports" },
-      ],
+      "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
