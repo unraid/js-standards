@@ -43,6 +43,8 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `prettier`                                                       | Shared Prettier config for JS/TS, JSON, Markdown, CSS, and SCSS (single source of truth)                                              |
 | `tsconfig/base.json` / `nuxt.json` / `worker.json` / `node.json` | Extreme-strict tsconfig + framework variants (`node.json` = ES2022 + Bundler resolution + `@types/node`, for esbuild-bundled Lambdas) |
 | `knip/base`                                                      | Shared knip dead-code baseline                                                                                                        |
+| `stylelint/base`                                                 | Shared Stylelint baseline (pins `stylelint-config-standard`); safe on all CSS, including token-source files                           |
+| `stylelint/design-tokens`                                        | Opt-in: forbids raw color literals (hex / named / `rgb()` / `oklch()` / …) so colors flow through tokens; layer onto `base`           |
 
 ### Severity tiers
 
@@ -121,6 +123,48 @@ export function renderFormHead(): string {
   return `<style>${formCss}</style>`;
 }
 ```
+
+### Stylelint
+
+Two Stylelint configs enforce the conventions above on hand-authored `.css`:
+
+- **`stylelint/base`** pins `stylelint-config-standard` so every repo holds CSS
+  to the same correctness bar (valid syntax, no duplicate selectors/properties,
+  modern color-function notation). Formatting stays with Prettier — the standard
+  config is non-stylistic, so they do not fight. Safe on **all** stylesheets,
+  including the files that define design tokens.
+- **`stylelint/design-tokens`** layers on top for component/feature CSS and
+  forbids **raw color literals** — hex, named colors, and `rgb()` / `hsl()` /
+  `oklch()` / `color()` — so every color flows through a token (`var(--…)`)
+  instead of being hardcoded. This is what keeps theming and light/dark handling
+  in one place; it also catches a raw literal smuggled into a `var(--token, #abc)`
+  fallback, which otherwise renders the literal when the token is missing instead
+  of failing visibly.
+
+Install Stylelint alongside this package (it is an optional peer) and compose the
+configs. Restrict `design-tokens` to the CSS you hand-write, and leave the files
+that _define_ tokens on `base` only (they legitimately hold raw color values):
+
+```js
+// stylelint.config.mjs
+import base from "@unraid/js-standards/stylelint/base";
+import designTokens from "@unraid/js-standards/stylelint/design-tokens";
+
+export default {
+  ...base,
+  ...designTokens,
+  rules: { ...base.rules, ...designTokens.rules },
+  overrides: [
+    // Token-source files define colors, so keep them on the baseline only.
+    { files: ["**/tokens/**/*.css"], rules: { ...base.rules } },
+  ],
+};
+```
+
+Validating custom-property _names_ against a known token set (catching a
+reference to a token that does not exist) is a project-level concern — add a
+repo-local allowlist rule for that. These configs guarantee a value is a token
+reference rather than a raw literal.
 
 ## Usage
 

@@ -35,7 +35,9 @@
     "./tsconfig/node.json": "./src/tsconfig/node.json",
     "./knip/base": "./src/knip/base.js",
     "./oxlint/base": "./src/oxlint/base.json",
-    "./oxlint/type-aware": "./src/oxlint/type-aware.json"
+    "./oxlint/type-aware": "./src/oxlint/type-aware.json",
+    "./stylelint/base": "./src/stylelint/base.js",
+    "./stylelint/design-tokens": "./src/stylelint/design-tokens.js"
   },
   "scripts": {
     "format": "prettier . --write",
@@ -56,21 +58,27 @@
     "eslint-plugin-unicorn": "^69.0.0",
     "globals": "^17.7.0",
     "prettier": "^3.9.4",
+    "stylelint-config-standard": "^40.0.0",
     "typescript-eslint": "^8.62.1"
   },
   "peerDependencies": {
     "@nuxt/eslint-config": ">=1.16.0",
     "eslint": ">=10.4.0",
+    "stylelint": ">=16.0.0",
     "typescript": ">=5.5.0"
   },
   "peerDependenciesMeta": {
     "@nuxt/eslint-config": {
+      "optional": true
+    },
+    "stylelint": {
       "optional": true
     }
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^1.16.0",
     "eslint": "^10.6.0",
+    "stylelint": "^17.14.0",
     "typescript": "^5.9.3",
     "vue-eslint-parser": "^10.4.1"
   },
