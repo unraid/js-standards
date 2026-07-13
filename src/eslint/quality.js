@@ -86,8 +86,20 @@ export default [
       // --- Import hygiene: only syntactic rules (no resolver → no false
       //     positives on Nuxt aliases / Workers virtual modules). Cycle
       //     detection is left to dependency-cruiser.
-      "import-x/no-duplicates": "error",
-      "import-x/consistent-type-specifier-style": ["error", "prefer-top-level"],
+      // All three type-import rules are pinned to the INLINE style so their
+      // autofixers converge instead of fighting. `no-duplicates` (default)
+      // wants a value + type import from one module merged into one statement;
+      // `prefer-inline` makes that merge use an inline `type` specifier
+      // (`import { a, type B }`). Paired with
+      // `consistent-type-specifier-style: prefer-inline` and
+      // `consistent-type-imports: { fixStyle: inline-type-imports }` (see
+      // typescript.js), a single `eslint --fix` reaches a stable fixed point.
+      // The previous `prefer-top-level` split type specifiers into a separate
+      // `import type` statement, which `no-duplicates` then flagged as a
+      // duplicate of the value import — an unfixable oscillation for any module
+      // that exports both a value and types.
+      "import-x/no-duplicates": ["error", { "prefer-inline": true }],
+      "import-x/consistent-type-specifier-style": ["error", "prefer-inline"],
       "import-x/no-mutable-exports": "error",
 
       // --- Unicorn: keep the sharp rules, silence the pure-opinion nagging
