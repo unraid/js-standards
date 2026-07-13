@@ -4,16 +4,16 @@ import { Linter } from "eslint";
 import tseslint from "typescript-eslint";
 import importX from "eslint-plugin-import-x";
 
-// Regression guard for the three-rule type-import conflict. When a module
-// exports both a value and types, `import-x/no-duplicates` wants a single
-// merged statement while the old `prefer-top-level` /
-// `separate-type-imports` settings wanted a distinct `import type` statement.
-// The autofixers then oscillated and left an unfixable error. Pinning all
-// three rules to the inline style makes a single `--fix` reach a stable,
-// error-free fixed point.
+// Guards that the shipped type-import rules already converge under a single
+// `eslint --fix` — no rule "fight". A value + type import from the same module
+// fixes to `import { value } from "m"` + a separate `import type { … } from
+// "m"`, which `no-duplicates` does NOT flag (pure value + pure type-only are
+// allowed to coexist). A file that looks stuck is almost always a half-fixed
+// state inspected without running the fixer to a fixed point.
 
 const linter = new Linter();
 
+// Mirror the shipped config for the three interacting rules.
 const config = {
   languageOptions: {
     parser: tseslint.parser,
@@ -21,31 +21,25 @@ const config = {
   },
   plugins: { "@typescript-eslint": tseslint.plugin, "import-x": importX },
   rules: {
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
-      { prefer: "type-imports", fixStyle: "inline-type-imports" },
-    ],
-    "import-x/no-duplicates": ["error", { "prefer-inline": true }],
-    "import-x/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "@typescript-eslint/consistent-type-imports": "error",
+    "import-x/no-duplicates": "error",
+    "import-x/consistent-type-specifier-style": ["error", "prefer-top-level"],
   },
 };
 
-// The store-memory.ts shape: a value import that also carries an inline type,
-// plus a separate `import type` from the same module.
-const CONFLICT_SOURCE = [
-  `import { SETTINGS_KEYS, type AppfeedBuild } from "./store";`,
-  `import type { AppfeedSettings } from "./store";`,
-  `const key = SETTINGS_KEYS.a;`,
-  `const build: AppfeedBuild = {};`,
-  `const settings: AppfeedSettings = {};`,
+// A module that exports both a value and types, imported as a mixed
+// value+inline-type statement plus a separate type import — the store shape.
+const MIXED_SOURCE = [
+  `import { VALUE, type Alpha } from "./mod";`,
+  `import type { Beta } from "./mod";`,
+  `const v = VALUE.x;`,
+  `const a: Alpha = {};`,
+  `const b: Beta = {};`,
   ``,
 ].join("\n");
 
-test("type-import rules converge on a single --fix pass", () => {
-  const { output, fixed, messages } = linter.verifyAndFix(
-    CONFLICT_SOURCE,
-    config,
-  );
+test("mixed value+type imports converge on a single --fix pass", () => {
+  const { output, fixed, messages } = linter.verifyAndFix(MIXED_SOURCE, config);
 
   assert.ok(fixed, "expected fixes to be applied");
   assert.equal(
@@ -54,26 +48,40 @@ test("type-import rules converge on a single --fix pass", () => {
     `expected no unfixable messages, got: ${JSON.stringify(messages)}`,
   );
 
-  // Both source lines collapse into one merged, inline-typed import.
   const importLines = output
     .split("\n")
-    .filter((line) => line.includes("./store"));
+    .filter((line) => line.includes("./mod"));
+  // Converges to a pure value import + one separate type-only import.
   assert.equal(
     importLines.length,
-    1,
-    `expected a single merged import, got:\n${output}`,
+    2,
+    `expected value + type-only imports, got:\n${output}`,
   );
-  assert.match(importLines[0], /type AppfeedBuild/);
-  assert.match(importLines[0], /type AppfeedSettings/);
-  assert.doesNotMatch(
-    importLines[0],
-    /^import type/,
-    "SETTINGS_KEYS is a value, so the merged statement must stay a value import",
+  const valueLine = importLines.find((l) => !l.startsWith("import type"));
+  const typeLine = importLines.find((l) => l.startsWith("import type"));
+  assert.ok(valueLine && !/\btype\s/.test(valueLine), "value import stays pure");
+  assert.match(typeLine, /Alpha/);
+  assert.match(typeLine, /Beta/);
+});
+
+test("a pure value + type-only split is already clean (no-duplicates allows it)", () => {
+  const source = [
+    `import { VALUE } from "./mod";`,
+    `import type { Alpha } from "./mod";`,
+    `const v = VALUE.x;`,
+    `const a: Alpha = {};`,
+    ``,
+  ].join("\n");
+  const messages = linter.verify(source, config);
+  assert.equal(
+    messages.length,
+    0,
+    `pure split must be clean, got: ${JSON.stringify(messages)}`,
   );
 });
 
 test("the fixed output is stable (no further reports)", () => {
-  const { output } = linter.verifyAndFix(CONFLICT_SOURCE, config);
+  const { output } = linter.verifyAndFix(MIXED_SOURCE, config);
   const secondPass = linter.verify(output, config);
   assert.equal(
     secondPass.length,
