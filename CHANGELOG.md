@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/unraid/js-standards/compare/js-standards-v1.3.1...js-standards-v1.3.2) (2026-07-13)
+
+
+### Bug Fixes
+
+* **eslint:** restore prefer-top-level type imports; the [#19](https://github.com/unraid/js-standards/issues/19) flip was unnecessary ([#20](https://github.com/unraid/js-standards/issues/20)) ([20ddc94](https://github.com/unraid/js-standards/commit/20ddc949e85b33e8de4c1bb8005ee679709f3189))
+
 ## [1.3.1](https://github.com/unraid/js-standards/compare/js-standards-v1.3.0...js-standards-v1.3.1) (2026-07-13)
 
 
