@@ -1,6 +1,6 @@
 {
   "name": "@unraid/js-standards",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "Lime Technology shared JS/TS code-quality presets: ESLint (type-aware, strict), Oxlint, Prettier, tsconfig, and knip.",
   "license": "MIT",
   "type": "module",
