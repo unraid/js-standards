@@ -235,6 +235,30 @@ enabled the flag with 161 mechanical fixes, and its lint-suppressions
 baseline shrank 36% because most of the "debt" was false findings from the
 unsound configuration (unraid/account#1564).
 
+### TypeScript 7 (native tsgo)
+
+TypeScript 7 (the native Go compiler, "Project Corsa") **does not ship the
+JavaScript compiler API** that type-aware linters depend on — `ts.createProgram`
+is gone. So the ESLint `typescript`/`base` concerns' type-aware rules do **not**
+run on TS 7: `typescript-eslint` won't even install against `typescript@7` (its
+peer is `>=4.8.4 <6.1.0`) and crashes if forced. TypeScript 7.1 is expected to
+ship a new (and different) programmatic API; until then there are two supported
+paths:
+
+**1. Side-by-side TypeScript 6.0 (keep `typescript-eslint`).** Per the
+TypeScript team's guidance, TS 7 is designed to run alongside a TS 6.0 install
+for tools that still need programmatic compiler access. Keep `typescript@6` as
+the `typescript` your linter/editor resolve (typescript-eslint's peer already
+allows `6.0.x`) and build/typecheck with the native compiler
+(`@typescript/native-preview`). The ESLint concerns here work unchanged.
+
+**2. Oxlint + `oxlint-tsgolint` (native TS 7).** Oxlint parses TypeScript with
+its own Rust parser (no dependency on the `typescript` package) and gets type
+information from `tsgolint` (built on `typescript-go`), so it runs **natively on
+TS 7**. Use the `oxlint/type-aware` preset with `oxlint --type-aware` (see
+[Optional: type-aware Oxlint](#optional-type-aware-oxlint-fast-advisory)) — the
+only linter that fully runs on a pure TS 7 toolchain today.
+
 ## Gotchas
 
 ### `no-restricted-imports` / `no-restricted-syntax` cannot be merged
@@ -350,16 +374,22 @@ semantic rules (unsafe-`any` family, floating promises, `await-thenable`,
 ```
 
 ```jsonc
-// package.json — needs the Go backend as a devDep
-"devDependencies": { "oxlint-tsgolint": "^0.24.0" },
+// package.json — needs the Go backend as a devDep. The version tracks the
+// TypeScript release it targets: 7.0.2xxx ↔ TS 7.0.2.
+"devDependencies": { "oxlint-tsgolint": "^7" },
 "scripts": { "lint:types:fast": "oxlint --type-aware" }
 ```
 
-This is a fast **advisory** for local use, not a replacement — ESLint stays the
-authoritative gate. Oxlint's type-aware set (oxlint 1.72 / tsgolint 0.24) covers
-the bulk of type-safety but **not** `no-unnecessary-condition` /
-`no-misused-promises`, and never the Vue/sonarjs/deslop rules. It's preview +
-pinned to a `tsgo` dev build.
+Oxlint type-aware went **stable (2026-07-22)** and now covers **59 of 61** of
+typescript-eslint's type-aware rules (oxlint 1.75 / tsgolint 7.x, tracking TS
+7.0.2) — but never the Vue/sonarjs/deslop rules, which stay ESLint-only.
+
+- **On TS ≤ 6**, treat it as a fast **advisory** alongside the authoritative
+  ESLint type-aware gate.
+- **On TS 7** (see [TypeScript 7](#typescript-7-native-tsgo)), it is the
+  **primary** type-aware engine — `typescript-eslint` can't run there, so Oxlint
+  `--type-aware` owns type-safety while ESLint keeps the syntactic + Vue/quality
+  rules.
 
 ## Why ESLint and not Biome / Oxlint (2026)
 
