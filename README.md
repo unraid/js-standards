@@ -30,6 +30,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `eslint/typescript`         | Type-safety — strict-type-checked + stylistic, unsafe-any / promise / nullish rules                                                  |
 | `eslint/quality`            | Quality patterns — unicorn (tuned), sonarjs, eslint-comments, deslop, complexity/size budgets, duplication                           |
 | `eslint/vue`                | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions                                                                  |
+| `eslint/react`              | React JSX/TSX components + hooks rules + jsx-a11y recommended (curated, anti-slop)                                                   |
 | `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards                                                                                     |
 | `eslint/testing`            | Spec/fixture relaxations                                                                                                             |
 | `eslint/strict-size`        | Opt-in: promotes `max-lines` + `max-lines-per-function` from `warn` to `error` (append after a preset once the repo is under budget) |
@@ -91,6 +92,65 @@ export default [...base, ...strictSize];
   inside a lifecycle hook — in favor of `useFetch()`/`useAsyncData()` (SSR payload
   transfer, request dedupe, consistent pending/error state). `$fetch()` inside
   function bodies is left alone.
+
+## Framework concerns
+
+### Vue / Nuxt
+
+`eslint/vue` adds Nuxt's own flat config (SFC parsing, auto-import +
+generated-component awareness) plus our team conventions, and steers
+data-loading `$fetch()` toward `useFetch()`/`useAsyncData()` (see above). It is
+already folded into the `eslint/nuxt` preset; import it directly only when
+composing a bespoke stack.
+
+```js
+import base from "@unraid/js-standards/eslint/base";
+import vue from "@unraid/js-standards/eslint/vue";
+
+export default [...base, ...vue];
+```
+
+Because it pulls Nuxt's bundled typescript-eslint / unicorn / import-x, dedupe
+those to a single version in the consumer (see Gotchas → pnpm overrides).
+
+### React
+
+`eslint/react` layers React support onto a base/core preset. It registers
+`@eslint-react/eslint-plugin`, `eslint-plugin-react-hooks`, and
+`eslint-plugin-jsx-a11y`, applying only to component files (`.jsx` / `.tsx`).
+
+```js
+import base from "@unraid/js-standards/eslint/base";
+import react from "@unraid/js-standards/eslint/react";
+
+export default [...base, ...react];
+```
+
+The rule set is **curated for correct React UI patterns + anti-slop**, not
+@eslint-react's full noisy `recommended`: `@eslint-react/no-missing-key`,
+`@eslint-react/no-duplicate-key`,
+`@eslint-react/no-nested-component-definitions`,
+`@eslint-react/dom-no-unsafe-target-blank`, and
+`@eslint-react/dom-no-unknown-property` are errors;
+`@eslint-react/no-array-index-key`, `@eslint-react/jsx-no-useless-fragment`, and
+`@eslint-react/dom-no-dangerously-set-innerhtml` are warns; jsx-a11y's
+`recommended` flat config is spread in whole; and `react-hooks/rules-of-hooks`
+(error) + `react-hooks/exhaustive-deps` (warn) — sourced from
+`eslint-plugin-react-hooks`, not @eslint-react's own equivalents — guard the
+classic hook footguns. Component files are exempted from
+`unicorn/filename-case` since React components are PascalCase.
+
+Composition note: unlike the Vue layer, this concern only bundles the three
+React plugins (not typescript-eslint / unicorn), so it composes cleanly with the
+`typescript` + `quality` concerns without the "Cannot redefine plugin" dedupe.
+Layer it after the base/core concerns and before prettier.
+
+> **ESLint 10 native:** this concern uses `@eslint-react` (peer `eslint: "*"`),
+> which is authored against the modern flat-config + context API and does not
+> call the `context.getFilename()` method ESLint removed in v10. No
+> `settings.react.version` pin or other workaround is required — the curated
+> rules are AST-based and React-version-independent, so they run on plain `.jsx`
+> with no type information.
 
 ## CSS conventions
 
