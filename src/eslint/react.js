@@ -2,23 +2,34 @@
  * Concern: React (JSX / TSX) components + hooks + a11y.
  *
  * Layers React support onto the framework-agnostic core. It registers three
- * plugins — eslint-plugin-react, eslint-plugin-react-hooks, and
+ * plugins — @eslint-react/eslint-plugin, eslint-plugin-react-hooks, and
  * eslint-plugin-jsx-a11y — and applies only to component files (`.jsx` and
  * `.tsx`), so a plain `.ts`/`.js` module never pays for the React rules.
  *
- * Rule philosophy: this is a CURATED set for "correct React UI patterns +
- * anti-slop", not the full `react/recommended` wall. We keep the rules that
- * catch real render bugs (missing/unstable keys, components declared inside
- * render, dangerous target="_blank", unknown DOM props) and drop the noisy,
- * opinion-heavy ones. jsx-a11y's `recommended` flat config is spread in whole,
- * because accessibility defaults are worth having everywhere.
+ * Plugin choice: we use `@eslint-react` (the "ESLint React (X)" toolkit) rather
+ * than the classic `eslint-plugin-react`. @eslint-react is ESLint-10-native — it
+ * declares `eslint: "*"` as its peer, is authored against the modern flat-config
+ * + context API, and does NOT call the `context.getFilename()` method ESLint
+ * removed in v10 (which is what made the classic plugin's `"detect"` version
+ * probe crash on ESLint 10). No `settings.react.version` workaround is needed;
+ * the curated rules below are AST-based and React-version-independent, so they
+ * run on plain `.jsx` with no type information. @eslint-react bundles the DOM,
+ * web-api, and naming-convention rule families under a single `@eslint-react/`
+ * namespace (dash-separated ids, e.g. `@eslint-react/dom-no-unsafe-target-blank`).
  *
- * Two rules are turned OFF on purpose:
- *   - `react/react-in-jsx-scope` — the modern JSX transform (React 17+,
- *     `jsx: "react-jsx"`) injects the runtime, so `import React` is no longer
- *     required in scope. Leaving this on would flag every correct component.
- *   - `react/prop-types` — TypeScript (the `typescript` concern) already owns
- *     prop typing; runtime prop-types are redundant and wrong for TS repos.
+ * Rule philosophy: this is a CURATED set for "correct React UI patterns +
+ * anti-slop", not @eslint-react's full `recommended` wall (which also turns on a
+ * large legacy class-component / children-* / purity surface). We keep the rules
+ * that catch real render bugs (missing/duplicate/unstable keys, components
+ * declared inside render, dangerous target="_blank", unknown DOM props) and drop
+ * the noisy, opinion-heavy ones. jsx-a11y's `recommended` flat config is spread
+ * in whole, because accessibility defaults are worth having everywhere.
+ *
+ * Hooks note: @eslint-react ships its own `rules-of-hooks` / `exhaustive-deps`,
+ * but we deliberately source those two from `eslint-plugin-react-hooks` (the
+ * canonical React-team implementation, which already supports ESLint 10) and do
+ * NOT enable @eslint-react's versions, so a hook footgun is reported once, not
+ * twice.
  *
  * Parser note: `.tsx` is parsed by typescript-eslint via the `typescript`
  * concern (which claims `.tsx` with `projectService`). Plain `.jsx` is
@@ -26,17 +37,6 @@
  * `languageOptions.parserOptions.ecmaFeatures.jsx = true` to understand JSX —
  * set below (jsx-a11y's recommended config also sets it, but we set it
  * explicitly so the concern is correct even if that changes upstream).
- *
- * React-version note: `settings.react.version` is pinned to a concrete value
- * instead of the usual `"detect"`. On ESLint 10, `"detect"` CRASHES
- * eslint-plugin-react 7.37.5 — its version probe calls `context.getFilename()`,
- * a method ESLint removed in v10, so any version-gated rule
- * (`no-unstable-nested-components`, etc.) throws
- * "contextOrFilename.getFilename is not a function". No eslint-plugin-react
- * release supports ESLint 10 yet (7.37.5 is latest). Pinning the version skips
- * the broken detection path entirely; the enabled rules are not
- * React-major-sensitive, so a fixed value is safe. Flip back to `"detect"`
- * once the plugin ships an ESLint-10 fix.
  *
  * Composition note: like the `vue` concern, this pulls its own plugin
  * instances. It does NOT bundle typescript-eslint / unicorn, so it composes
@@ -48,7 +48,7 @@
  *   import react from "@unraid/js-standards/eslint/react";
  *   export default [...base, ...react];
  */
-import react from "eslint-plugin-react";
+import eslintReact from "@eslint-react/eslint-plugin";
 import reactHooks from "eslint-plugin-react-hooks";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 
@@ -63,24 +63,21 @@ const REACT_FILES = ["**/*.{jsx,tsx}"];
  * too noisy to hard-gate on an existing codebase.
  */
 export const reactRules = {
-  // --- Modern-transform / TypeScript offs (see header)
-  "react/react-in-jsx-scope": "off",
-  "react/prop-types": "off",
-
   // --- Render correctness (real bugs)
-  "react/jsx-key": "error", // missing key in a list → reconciliation bugs
-  "react/no-unstable-nested-components": "error", // component defined mid-render remounts every render
-  "react/jsx-no-target-blank": "error", // target="_blank" without rel="noreferrer" is a security hole
-  "react/no-unknown-property": "error", // typo'd / non-DOM attributes silently dropped
+  "@eslint-react/no-missing-key": "error", // missing key in a list → reconciliation bugs
+  "@eslint-react/no-duplicate-key": "error", // duplicate keys silently collide during reconciliation
+  "@eslint-react/no-nested-component-definitions": "error", // component defined mid-render remounts every render
+  "@eslint-react/dom-no-unsafe-target-blank": "error", // target="_blank" without rel="noreferrer" is a security hole
+  "@eslint-react/dom-no-unknown-property": "error", // typo'd / non-DOM attributes silently dropped
 
   // --- Anti-slop nudges (warn)
-  "react/no-array-index-key": "warn", // array index as key breaks on reorder/insert
-  "react/jsx-no-useless-fragment": "warn", // <>{x}</> wrapping a single child
-  "react/no-danger": "warn", // dangerouslySetInnerHTML — sanitize before using
-  "react/self-closing-comp": "warn", // <div></div> → <div />
-  "react/jsx-boolean-value": ["warn", "never"], // prefer <Comp disabled /> over disabled={true}
+  "@eslint-react/no-array-index-key": "warn", // array index as key breaks on reorder/insert
+  "@eslint-react/jsx-no-useless-fragment": "warn", // <>{x}</> wrapping a single child
+  "@eslint-react/dom-no-dangerously-set-innerhtml": "warn", // dangerouslySetInnerHTML — sanitize before using
 
-  // --- Hooks: the two rules that catch the classic hook footguns
+  // --- Hooks: the two rules that catch the classic hook footguns. Sourced from
+  // eslint-plugin-react-hooks (the React-team implementation); @eslint-react's
+  // own equivalents are intentionally left off to avoid double-reporting.
   "react-hooks/rules-of-hooks": "error", // conditional / looped hook calls
   "react-hooks/exhaustive-deps": "warn", // stale-closure dependency arrays
 };
@@ -93,13 +90,13 @@ export default [
     files: REACT_FILES,
     ...jsxA11y.flatConfigs.recommended,
   },
-  // React + hooks: register the plugins, pin the React version (see the
-  // "React-version note" in the header — `"detect"` crashes on ESLint 10), and
-  // apply the curated rule set.
+  // React + hooks: register the plugins and apply the curated rule set. No
+  // `settings.react.version` pin is needed — @eslint-react is ESLint-10-native
+  // and these rules are React-version-independent (see the header).
   {
     files: REACT_FILES,
     plugins: {
-      react,
+      "@eslint-react": eslintReact,
       "react-hooks": reactHooks,
     },
     languageOptions: {
@@ -108,11 +105,6 @@ export default [
       parserOptions: {
         ecmaFeatures: { jsx: true },
       },
-    },
-    settings: {
-      // NB: `"detect"` throws on ESLint 10 (eslint-plugin-react 7.37.5 calls the
-      // removed `context.getFilename()`); pin until a fixed plugin ships.
-      react: { version: "19.0" },
     },
     rules: reactRules,
   },
