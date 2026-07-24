@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { Linter } from "eslint";
-import react from "eslint-plugin-react";
+import eslintReact from "@eslint-react/eslint-plugin";
 import reactHooks from "eslint-plugin-react-hooks";
 import { reactRules } from "../src/eslint/react.js";
 
@@ -11,7 +11,7 @@ const linter = new Linter();
 const lintJsx = (lines) =>
   linter.verify(lines.join("\n"), {
     plugins: {
-      react,
+      "@eslint-react": eslintReact,
       "react-hooks": reactHooks,
     },
     languageOptions: {
@@ -21,9 +21,6 @@ const lintJsx = (lines) =>
         ecmaFeatures: { jsx: true },
       },
     },
-    // Pinned, not "detect": "detect" crashes eslint-plugin-react 7.37.5 on
-    // ESLint 10 (removed `context.getFilename()`) — matches the react concern.
-    settings: { react: { version: "19.0" } },
     rules: reactRules,
   });
 
@@ -36,8 +33,8 @@ test("flags array index used as a key", () => {
     ");",
   ]);
   assert.ok(
-    ruleIds(messages).includes("react/no-array-index-key"),
-    `expected react/no-array-index-key, got: ${JSON.stringify(messages)}`,
+    ruleIds(messages).includes("@eslint-react/no-array-index-key"),
+    `expected @eslint-react/no-array-index-key, got: ${JSON.stringify(messages)}`,
   );
 });
 
@@ -47,10 +44,12 @@ test("allows a stable key from item id", () => {
     "  <ul>{items.map((item) => <li key={item.id}>{item.name}</li>)}</ul>",
     ");",
   ]);
-  const relevant = messages.filter(
-    (m) =>
-      m.ruleId === "react/no-array-index-key" || m.ruleId === "react/jsx-key",
-  );
+  const keyRuleIds = new Set([
+    "@eslint-react/no-array-index-key",
+    "@eslint-react/no-missing-key",
+    "@eslint-react/no-duplicate-key",
+  ]);
+  const relevant = messages.filter((m) => keyRuleIds.has(m.ruleId));
   assert.equal(
     relevant.length,
     0,

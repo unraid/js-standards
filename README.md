@@ -116,7 +116,7 @@ those to a single version in the consumer (see Gotchas → pnpm overrides).
 ### React
 
 `eslint/react` layers React support onto a base/core preset. It registers
-`eslint-plugin-react`, `eslint-plugin-react-hooks`, and
+`@eslint-react/eslint-plugin`, `eslint-plugin-react-hooks`, and
 `eslint-plugin-jsx-a11y`, applying only to component files (`.jsx` / `.tsx`).
 
 ```js
@@ -126,30 +126,31 @@ import react from "@unraid/js-standards/eslint/react";
 export default [...base, ...react];
 ```
 
-The rule set is **curated for correct React UI patterns + anti-slop**, not the
-full noisy `react/recommended`: `react/jsx-key`,
-`react/no-unstable-nested-components`, `react/jsx-no-target-blank`, and
-`react/no-unknown-property` are errors; `react/no-array-index-key`,
-`react/jsx-no-useless-fragment`, `react/no-danger`, `react/self-closing-comp`,
-and `react/jsx-boolean-value` ("never") are warns; jsx-a11y's `recommended` flat
-config is spread in whole; and `react-hooks/rules-of-hooks` (error) +
-`react-hooks/exhaustive-deps` (warn) guard the classic hook footguns.
-`react/react-in-jsx-scope` and `react/prop-types` are turned OFF — the modern
-JSX transform needs no in-scope `React`, and TypeScript already owns prop
-typing. Component files are exempted from `unicorn/filename-case` since React
-components are PascalCase.
+The rule set is **curated for correct React UI patterns + anti-slop**, not
+@eslint-react's full noisy `recommended`: `@eslint-react/no-missing-key`,
+`@eslint-react/no-duplicate-key`,
+`@eslint-react/no-nested-component-definitions`,
+`@eslint-react/dom-no-unsafe-target-blank`, and
+`@eslint-react/dom-no-unknown-property` are errors;
+`@eslint-react/no-array-index-key`, `@eslint-react/jsx-no-useless-fragment`, and
+`@eslint-react/dom-no-dangerously-set-innerhtml` are warns; jsx-a11y's
+`recommended` flat config is spread in whole; and `react-hooks/rules-of-hooks`
+(error) + `react-hooks/exhaustive-deps` (warn) — sourced from
+`eslint-plugin-react-hooks`, not @eslint-react's own equivalents — guard the
+classic hook footguns. Component files are exempted from
+`unicorn/filename-case` since React components are PascalCase.
 
 Composition note: unlike the Vue layer, this concern only bundles the three
 React plugins (not typescript-eslint / unicorn), so it composes cleanly with the
 `typescript` + `quality` concerns without the "Cannot redefine plugin" dedupe.
 Layer it after the base/core concerns and before prettier.
 
-> **ESLint 10 note:** `settings.react.version` is pinned to a concrete value
-> rather than `"detect"`. On ESLint 10, `"detect"` crashes eslint-plugin-react
-> 7.37.5 — its version probe calls `context.getFilename()`, which ESLint removed
-> in v10. No plugin release supports ESLint 10 yet; the pin skips the broken
-> detection path and the enabled rules are not React-major-sensitive. Flip back
-> to `"detect"` once eslint-plugin-react ships an ESLint-10 fix.
+> **ESLint 10 native:** this concern uses `@eslint-react` (peer `eslint: "*"`),
+> which is authored against the modern flat-config + context API and does not
+> call the `context.getFilename()` method ESLint removed in v10. No
+> `settings.react.version` pin or other workaround is required — the curated
+> rules are AST-based and React-version-independent, so they run on plain `.jsx`
+> with no type information.
 
 ## CSS conventions
 
