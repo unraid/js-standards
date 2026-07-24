@@ -30,6 +30,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `eslint/typescript`         | Type-safety — strict-type-checked + stylistic, unsafe-any / promise / nullish rules                                                  |
 | `eslint/quality`            | Quality patterns — unicorn (tuned), sonarjs, eslint-comments, deslop, complexity/size budgets, duplication                           |
 | `eslint/vue`                | Vue 3 / Nuxt SFC parsing + auto-import awareness + team conventions                                                                  |
+| `eslint/react`              | React JSX/TSX components + hooks rules + jsx-a11y recommended (curated, anti-slop)                                                   |
 | `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards                                                                                     |
 | `eslint/testing`            | Spec/fixture relaxations                                                                                                             |
 | `eslint/strict-size`        | Opt-in: promotes `max-lines` + `max-lines-per-function` from `warn` to `error` (append after a preset once the repo is under budget) |
@@ -91,6 +92,64 @@ export default [...base, ...strictSize];
   inside a lifecycle hook — in favor of `useFetch()`/`useAsyncData()` (SSR payload
   transfer, request dedupe, consistent pending/error state). `$fetch()` inside
   function bodies is left alone.
+
+## Framework concerns
+
+### Vue / Nuxt
+
+`eslint/vue` adds Nuxt's own flat config (SFC parsing, auto-import +
+generated-component awareness) plus our team conventions, and steers
+data-loading `$fetch()` toward `useFetch()`/`useAsyncData()` (see above). It is
+already folded into the `eslint/nuxt` preset; import it directly only when
+composing a bespoke stack.
+
+```js
+import base from "@unraid/js-standards/eslint/base";
+import vue from "@unraid/js-standards/eslint/vue";
+
+export default [...base, ...vue];
+```
+
+Because it pulls Nuxt's bundled typescript-eslint / unicorn / import-x, dedupe
+those to a single version in the consumer (see Gotchas → pnpm overrides).
+
+### React
+
+`eslint/react` layers React support onto a base/core preset. It registers
+`eslint-plugin-react`, `eslint-plugin-react-hooks`, and
+`eslint-plugin-jsx-a11y`, applying only to component files (`.jsx` / `.tsx`).
+
+```js
+import base from "@unraid/js-standards/eslint/base";
+import react from "@unraid/js-standards/eslint/react";
+
+export default [...base, ...react];
+```
+
+The rule set is **curated for correct React UI patterns + anti-slop**, not the
+full noisy `react/recommended`: `react/jsx-key`,
+`react/no-unstable-nested-components`, `react/jsx-no-target-blank`, and
+`react/no-unknown-property` are errors; `react/no-array-index-key`,
+`react/jsx-no-useless-fragment`, `react/no-danger`, `react/self-closing-comp`,
+and `react/jsx-boolean-value` ("never") are warns; jsx-a11y's `recommended` flat
+config is spread in whole; and `react-hooks/rules-of-hooks` (error) +
+`react-hooks/exhaustive-deps` (warn) guard the classic hook footguns.
+`react/react-in-jsx-scope` and `react/prop-types` are turned OFF — the modern
+JSX transform needs no in-scope `React`, and TypeScript already owns prop
+typing. Component files are exempted from `unicorn/filename-case` since React
+components are PascalCase.
+
+Composition note: unlike the Vue layer, this concern only bundles the three
+React plugins (not typescript-eslint / unicorn), so it composes cleanly with the
+`typescript` + `quality` concerns without the "Cannot redefine plugin" dedupe.
+Layer it after the base/core concerns and before prettier.
+
+> **ESLint 10 note:** `settings.react.version` is pinned to a concrete value
+> rather than `"detect"`. On ESLint 10, `"detect"` crashes eslint-plugin-react
+> 7.37.5 — its version probe calls `context.getFilename()`, which ESLint removed
+> in v10. No plugin release supports ESLint 10 yet; the pin skips the broken
+> detection path and the enabled rules are not React-major-sensitive. Flip back
+> to `"detect"` once eslint-plugin-react ships an ESLint-10 fix.
 
 ## CSS conventions
 
