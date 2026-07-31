@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.5.0](https://github.com/unraid/js-standards/compare/js-standards-v1.4.0...js-standards-v1.5.0) (2026-07-24)
+
+
+### Features
+
+* **eslint:** add react concern ([#28](https://github.com/unraid/js-standards/issues/28)) ([0ff091e](https://github.com/unraid/js-standards/commit/0ff091e039594e8c3d7ec6bdaceb4e251c9361fe))
+
+
+### Bug Fixes
+
+* **eslint:** make react concern ESLint 10 native via [@eslint-react](https://github.com/eslint-react) ([#31](https://github.com/unraid/js-standards/issues/31)) ([63b1fa7](https://github.com/unraid/js-standards/commit/63b1fa7dd08bb1eaf023695fd3ef7fbd78ec2e6b))
+
+
+### Chores
+
+* **deps:** bump eslint-plugin-sonarjs from 4.1.0 to 4.2.0 ([#26](https://github.com/unraid/js-standards/issues/26)) ([b8314d0](https://github.com/unraid/js-standards/commit/b8314d03bfd10ff5a4e02f60ad04c850c497b77c))
+* **deps:** bump prettier from 3.9.4 to 3.9.6 ([#25](https://github.com/unraid/js-standards/issues/25)) ([b5afa7f](https://github.com/unraid/js-standards/commit/b5afa7f67995a6fbb598a59e9b7ec2eae47883cb))
+* **deps:** bump typescript-eslint from 8.63.0 to 8.65.0 ([#24](https://github.com/unraid/js-standards/issues/24)) ([bae6bc8](https://github.com/unraid/js-standards/commit/bae6bc832dd68b5b1416ce0ec0a85637e6ace78d))
+
+
+### Documentation
+
+* document TypeScript 7 (tsgo) linting via oxlint-tsgolint ([#30](https://github.com/unraid/js-standards/issues/30)) ([6928959](https://github.com/unraid/js-standards/commit/6928959049c040955f8b039591e666c19eb12639))
+
 ## [1.4.0](https://github.com/unraid/js-standards/compare/js-standards-v1.3.2...js-standards-v1.4.0) (2026-07-13)
 
 
