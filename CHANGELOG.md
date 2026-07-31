@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.5.1](https://github.com/unraid/js-standards/compare/js-standards-v1.5.0...js-standards-v1.5.1) (2026-07-31)
+
+
+### Chores
+
+* **deps-dev:** bump stylelint from 17.14.0 to 17.14.1 ([#33](https://github.com/unraid/js-standards/issues/33)) ([8be9015](https://github.com/unraid/js-standards/commit/8be90156d459aac34f76efab4072ad8b6f1cfd3b))
+* **deps-dev:** bump typescript from 5.9.3 to 6.0.3 ([#11](https://github.com/unraid/js-standards/issues/11)) ([304cc01](https://github.com/unraid/js-standards/commit/304cc01fb7a7b227d95a4bc44e9d97d56fbabd73))
+* **deps:** bump eslint-plugin-unicorn from 69.0.0 to 72.0.0 ([#27](https://github.com/unraid/js-standards/issues/27)) ([66ae14f](https://github.com/unraid/js-standards/commit/66ae14f56c4ffb788ee75b64e98aeb3fbb0329a8))
+* **deps:** bump globals from 17.7.0 to 17.8.0 ([#34](https://github.com/unraid/js-standards/issues/34)) ([c3d58ec](https://github.com/unraid/js-standards/commit/c3d58ec7d1d80c8a6eefa918fa8b9d461c82195a))
+
 ## [1.5.0](https://github.com/unraid/js-standards/compare/js-standards-v1.4.0...js-standards-v1.5.0) (2026-07-24)
 
 
