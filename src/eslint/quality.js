@@ -111,10 +111,10 @@ export default [
       "unicorn/prefer-ternary": "off",
       "unicorn/no-useless-undefined": "off",
 
-      // --- Unicorn: rule that makes the canonical browser framing check
-      //     unspellable. `window.parent === window` is how DOM code asks "am I
-      //     in an iframe?", and every rewrite this rule accepts is rejected by
-      //     another shipped rule:
+      // --- Unicorn: rule that makes the canonical browser top-level check
+      //     unspellable. `window.parent === window` is true for a top-level
+      //     window (`!==` is the corresponding embedded-frame check), and every
+      //     rewrite this rule accepts is rejected by another shipped rule:
       //
       //       window.parent === window        → unicorn/prefer-global-this
       //       parent === self                 → unicorn/prefer-global-this
@@ -128,11 +128,6 @@ export default [
       //     which means there is no spelling of the check that satisfies the
       //     shipped set. `window` is also the *typed* global in DOM code, not a
       //     legacy alias.
-      //
-      //     It also contradicts a rule we already ship as an error:
-      //     `sonarjs/no-global-this` forbids the very `globalThis` that
-      //     `prefer-global-this` demands. Turning it off makes that pair
-      //     consistent.
       //
       //     `unicorn/no-unnecessary-global-this` still trims `globalThis.parent`
       //     to `parent` for plain member access, so the useful half is kept.
