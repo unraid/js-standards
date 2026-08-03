@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/unraid/js-standards/compare/js-standards-v1.5.1...js-standards-v1.5.2) (2026-08-03)
+
+
+### Bug Fixes
+
+* **eslint:** stop prefer-global-this making the browser framing check unspellable ([#36](https://github.com/unraid/js-standards/issues/36)) ([87d747d](https://github.com/unraid/js-standards/commit/87d747d1c9be1a071e00413a0d37e19c3a6b836e))
+
 ## [1.5.1](https://github.com/unraid/js-standards/compare/js-standards-v1.5.0...js-standards-v1.5.1) (2026-07-31)
 
 
