@@ -22,3 +22,8 @@ export const TOOLING_FILES = [
   "**/scripts/**",
   "eslint.config.*",
 ];
+
+/** Playwright config files, which carry their own timeout obligations. */
+export const PLAYWRIGHT_CONFIG_FILES = [
+  "**/playwright*.config.{ts,mts,cts,js,mjs,cjs}",
+];

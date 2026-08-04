@@ -33,6 +33,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `eslint/react`              | React JSX/TSX components + hooks rules + jsx-a11y recommended (curated, anti-slop)                                                   |
 | `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards                                                                                     |
 | `eslint/testing`            | Spec/fixture relaxations                                                                                                             |
+| `eslint/playwright`         | Playwright config must set `actionTimeout` + `navigationTimeout` (both default to "no timeout")                                      |
 | `eslint/strict-size`        | Opt-in: promotes `max-lines` + `max-lines-per-function` from `warn` to `error` (append after a preset once the repo is under budget) |
 | `eslint/ignores`            | Shared build-artifact ignores                                                                                                        |
 | `eslint/globals`            | Raw globals maps (Workers + webGUI)                                                                                                  |
@@ -151,6 +152,24 @@ Layer it after the base/core concerns and before prettier.
 > `settings.react.version` pin or other workaround is required — the curated
 > rules are AST-based and React-version-independent, so they run on plain `.jsx`
 > with no type information.
+
+### Playwright
+
+```js
+import playwright from "@unraid/js-standards/eslint/playwright";
+```
+
+Applies to `playwright*.config.*` and requires `use.actionTimeout` and
+`use.navigationTimeout` to be set explicitly.
+
+Playwright defaults both to `0`, which means _no timeout_ rather than a sensible
+one. `expect()` has its own default, so a config that sets `expect.timeout` looks
+bounded — but that ceiling only covers assertions. A bare `.click()` or `.goto()`
+on an element that never becomes actionable waits for the entire test timeout.
+
+On a suite with a generous per-test budget that is a silent blackout: no output,
+no failing assertion, and a final error naming the test rather than the call that
+hung. Setting both turns it into a fast failure that names the locator.
 
 ## CSS conventions
 

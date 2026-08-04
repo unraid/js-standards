@@ -26,6 +26,7 @@
     "./eslint/react": "./src/eslint/react.js",
     "./eslint/cloudflare-workers": "./src/eslint/cloudflare-workers.js",
     "./eslint/testing": "./src/eslint/testing.js",
+    "./eslint/playwright": "./src/eslint/playwright.js",
     "./eslint/oxlint": "./src/eslint/oxlint.js",
     "./eslint/ignores": "./src/eslint/ignores.js",
     "./eslint/globals": "./src/eslint/globals.js",
