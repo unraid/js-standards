@@ -32,6 +32,9 @@ importers:
       eslint-plugin-oxlint:
         specifier: ^1.72.0
         version: 1.72.0(oxlint@1.72.0)
+      eslint-plugin-playwright:
+        specifier: ^2.11.0
+        version: 2.11.0(eslint@10.8.0)
       eslint-plugin-react-hooks:
         specifier: ^7.1.1
         version: 7.1.1(eslint@10.8.0)
@@ -1205,6 +1208,12 @@ packages:
     resolution: {integrity: sha512-WBPQdXRRatC2/8wWZ16iM/p+Eg3YTwa7As8IouMWnoAUYPOqa6QW3/kExifTpU7e9tFta5MT36+Z4eAWsg35Ag==}
     peerDependencies:
       oxlint: ~1.72.0
+
+  eslint-plugin-playwright@2.11.0:
+    resolution: {integrity: sha512-zOIEYyv1TSn2izXkyg/yj0LXc4YBQI6pl3xIFWwMCcXt/dgQCz8dBqXiXFMoM3xc/GqZThAtaGYo8aPu/vBd+Q==}
+    engines: {node: '>=16.9.0'}
+    peerDependencies:
+      eslint: '>=8.40.0'
 
   eslint-plugin-react-dom@5.18.0:
     resolution: {integrity: sha512-Yb4fYRI29zDjUqy8bf+iwJitIJ7JmYXVRZ5eXWGEcq29w3tVATsMSBAjLQPo/OC6JOxUaIdr0xyCUOEbbev45A==}
@@ -3673,6 +3682,11 @@ snapshots:
     dependencies:
       jsonc-parser: 3.3.1
       oxlint: 1.72.0
+
+  eslint-plugin-playwright@2.11.0(eslint@10.8.0):
+    dependencies:
+      eslint: 10.8.0
+      globals: 17.8.0
 
   eslint-plugin-react-dom@5.18.0(eslint@10.8.0)(typescript@6.0.3):
     dependencies:

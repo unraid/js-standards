@@ -33,7 +33,7 @@ and append Prettier last; pull individual concerns when you want finer control.
 | `eslint/react`              | React JSX/TSX components + hooks rules + jsx-a11y recommended (curated, anti-slop)                                                   |
 | `eslint/cloudflare-workers` | Workers runtime globals + no-Node-builtin guards                                                                                     |
 | `eslint/testing`            | Spec/fixture relaxations                                                                                                             |
-| `eslint/playwright`         | Playwright config must set `actionTimeout` + `navigationTimeout` (both default to "no timeout")                                      |
+| `eslint/playwright`         | Playwright specs (recommended + curated matcher/diagnostic rules) and configs (mandatory action/navigation timeouts)                 |
 | `eslint/strict-size`        | Opt-in: promotes `max-lines` + `max-lines-per-function` from `warn` to `error` (append after a preset once the repo is under budget) |
 | `eslint/ignores`            | Shared build-artifact ignores                                                                                                        |
 | `eslint/globals`            | Raw globals maps (Workers + webGUI)                                                                                                  |
@@ -159,8 +159,34 @@ Layer it after the base/core concerns and before prettier.
 import playwright from "@unraid/js-standards/eslint/playwright";
 ```
 
-Applies to `playwright*.config.*` and requires `use.actionTimeout` and
-`use.navigationTimeout` to be set explicitly.
+Two halves — the specs and the config that runs them.
+
+**Specs** (`**/*.{spec,test}.*`) get `eslint-plugin-playwright`'s recommended set
+(conditional logic in tests, forgotten `await` on assertions,
+`page.waitForTimeout` sleeps, focused/skipped tests left behind) plus a curated
+tier the plugin ships but leaves out of recommended, all at `error`: matcher
+choices that make a failure legible (`prefer-to-be`, `prefer-comparison-matcher`,
+…), `require-to-pass-timeout`, `no-commented-out-tests`, locator quality
+(`no-raw-locators`, `no-nth-methods`, `prefer-native-locators`,
+`no-get-by-title`), and structure (`require-hook`, `require-top-level-describe`,
+`no-slowed-test`).
+
+This states the target rather than the current state of any one suite. A repo
+adopting mid-stream downgrades specific rules in its own config, which keeps the
+exception visible and local instead of hidden in the shared baseline.
+
+Pure convention stays **off** — `prefer-lowercase-title` (style), `require-tags`
+and `no-restricted-*` (need a project vocabulary), `require-soft-assertions`
+(changes failure semantics), `max-expects` (an arbitrary budget), and `no-hooks`
+(contradicts `require-hook`).
+
+> The plugin's rules key off bare `test`/`expect` identifiers. In a repo that
+> also runs Vitest or Jest under that glob, re-scope `files` on the spec entry to
+> where Playwright actually owns — otherwise the rules give Playwright advice
+> about a unit test.
+
+**Configs** (`playwright*.config.*`) must set `use.actionTimeout` and
+`use.navigationTimeout` explicitly.
 
 Playwright defaults both to `0`, which means _no timeout_ rather than a sensible
 one. `expect()` has its own default, so a config that sets `expect.timeout` looks

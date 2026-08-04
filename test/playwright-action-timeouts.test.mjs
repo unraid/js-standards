@@ -4,7 +4,11 @@ import { Linter } from "eslint";
 import playwrightConfigConcern from "../src/eslint/playwright.js";
 
 const linter = new Linter();
-const [concern] = playwrightConfigConcern;
+// Select by rule identity, not position — the concern also ships a spec-file
+// entry, and which one comes first is not part of its contract.
+const concern = playwrightConfigConcern.find(
+  (entry) => entry.rules?.["playwright-config/require-action-timeouts"],
+);
 
 /** Lint a Playwright config body under the shipped concern's plugin and rules. */
 const lintConfig = (source) =>
