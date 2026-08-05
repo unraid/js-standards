@@ -1,5 +1,5 @@
 /**
- * Internal: the framework-agnostic core = ignores + typescript + quality +
+ * Internal: the framework-agnostic core = ignores + quality + typescript +
  * testing + tooling relaxations. NOT exported directly and deliberately does
  * NOT end with prettier — each public preset appends prettier last (after any
  * framework layer) so no formatting rules survive.
@@ -12,8 +12,10 @@ import { TOOLING_FILES } from "./globs.js";
 
 export default [
   ...ignores,
-  ...typescript,
   ...quality,
+  // TypeScript must follow the JavaScript quality layer so its extension rules
+  // can disable overlapping core rules such as no-undef and no-unused-vars.
+  ...typescript,
   ...testing,
   {
     files: TOOLING_FILES,
