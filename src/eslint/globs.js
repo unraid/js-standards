@@ -22,3 +22,18 @@ export const TOOLING_FILES = [
   "**/scripts/**",
   "eslint.config.*",
 ];
+
+/** Playwright config files, which carry their own timeout obligations. */
+export const PLAYWRIGHT_CONFIG_FILES = [
+  "**/playwright*.config.{ts,mts,cts,js,mjs,cjs}",
+];
+
+/**
+ * Playwright specs — mirrors Playwright's own default `testMatch`.
+ *
+ * The plugin's rules key off bare `test`/`expect` identifiers, so in a repo that
+ * also runs Vitest or Jest under this pattern, re-scope `files` on the spec entry
+ * to wherever Playwright actually owns (`e2e/**`, `**\/*.e2e.spec.ts`, …).
+ * Otherwise the rules give Playwright advice about a unit test.
+ */
+export const PLAYWRIGHT_SPEC_FILES = ["**/*.{spec,test}.{ts,tsx,js,mjs,cjs}"];
