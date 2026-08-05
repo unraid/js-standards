@@ -109,6 +109,201 @@ const configPlugin = {
   rules: { "require-action-timeouts": requireActionTimeouts },
 };
 
+const LOCATOR_ACTIONS = new Set([
+  "blur",
+  "check",
+  "clear",
+  "click",
+  "dblclick",
+  "dispatchEvent",
+  "dragTo",
+  "fill",
+  "focus",
+  "hover",
+  "press",
+  "pressSequentially",
+  "selectOption",
+  "setChecked",
+  "setInputFiles",
+  "tap",
+  "type",
+  "uncheck",
+]);
+
+const COPY_LOCATORS = new Set([
+  "getByAltText",
+  "getByLabel",
+  "getByPlaceholder",
+  "getByText",
+  "getByTitle",
+]);
+
+/** Reads a static member name from dot or string-literal bracket notation. */
+function memberName(memberExpression) {
+  if (memberExpression.type !== "MemberExpression") return null;
+  if (
+    !memberExpression.computed &&
+    memberExpression.property.type === "Identifier"
+  ) {
+    return memberExpression.property.name;
+  }
+  if (
+    memberExpression.computed &&
+    memberExpression.property.type === "Literal" &&
+    typeof memberExpression.property.value === "string"
+  ) {
+    return memberExpression.property.value;
+  }
+  return null;
+}
+
+/** True for literal strings/regexes and template literals without expressions. */
+function isStaticCopy(node) {
+  if (!node) return false;
+  if (node.type === "Literal") {
+    return typeof node.value === "string" || Boolean(node.regex);
+  }
+  return node.type === "TemplateLiteral" && node.expressions.length === 0;
+}
+
+/** Returns a direct static property value from an object expression. */
+function staticProperty(objectExpression, name) {
+  if (objectExpression?.type !== "ObjectExpression") return null;
+  const property = findProperty(objectExpression, name);
+  return property?.type === "Property" ? property.value : null;
+}
+
+/** Removes transparent syntax wrappers around a locator expression. */
+function unwrapExpression(expression) {
+  let current = expression;
+  while (
+    current?.type === "ChainExpression" ||
+    current?.type === "TSAsExpression" ||
+    current?.type === "TSSatisfiesExpression" ||
+    current?.type === "TSNonNullExpression"
+  ) {
+    current = current.expression;
+  }
+
+  return current;
+}
+
+/** Identifies whether one call introduces a static copy constraint. */
+function copyConstraint(callExpression) {
+  const method = memberName(callExpression.callee);
+  if (
+    method &&
+    COPY_LOCATORS.has(method) &&
+    isStaticCopy(callExpression.arguments[0])
+  ) {
+    return { node: callExpression, selector: method };
+  }
+
+  if (method === "getByRole") {
+    const name = staticProperty(callExpression.arguments[1], "name");
+    return isStaticCopy(name)
+      ? { node: callExpression, selector: "getByRole({ name })" }
+      : null;
+  }
+
+  if (method === "filter") {
+    const options = callExpression.arguments[0];
+    for (const name of ["hasText", "hasNotText"]) {
+      if (isStaticCopy(staticProperty(options, name))) {
+        return { node: callExpression, selector: `filter({ ${name} })` };
+      }
+    }
+  }
+
+  return null;
+}
+
+/** Resolves a lexical variable without confusing same-name variables in nested scopes. */
+function findVariable(scope, name) {
+  let current = scope;
+  while (current) {
+    const variable = current.set.get(name);
+    if (variable) return variable;
+    current = current.upper;
+  }
+  return null;
+}
+
+/** Finds a copy-based Playwright locator in an action receiver chain. */
+function copyLocator(expression, resolveIdentifier) {
+  let current = unwrapExpression(expression);
+  while (
+    current?.type === "CallExpression" &&
+    current.callee.type === "MemberExpression"
+  ) {
+    const constraint = copyConstraint(current);
+    if (constraint) return constraint;
+    current = unwrapExpression(current.callee.object);
+  }
+  return current?.type === "Identifier" ? resolveIdentifier?.(current) : null;
+}
+
+const preferStableActionLocator = {
+  meta: {
+    type: "suggestion",
+    docs: {
+      description:
+        "Prefer stable non-copy locators when selecting an element for a Playwright action",
+    },
+    schema: [],
+    messages: {
+      unstable:
+        "{{selector}} uses static UI copy to select an action target. Prefer getByTestId() or another stable non-copy selector so i18n and copy edits do not break the journey; keep copy locators for assertions.",
+    },
+  },
+  create(context) {
+    const copyVariables = new Map();
+    const sourceCode = context.sourceCode;
+    const resolveCopyVariable = (node, identifier) => {
+      const variable = findVariable(sourceCode.getScope(node), identifier.name);
+      return variable ? copyVariables.get(variable) : null;
+    };
+
+    return {
+      VariableDeclarator(node) {
+        if (
+          node.parent.kind !== "const" ||
+          node.id.type !== "Identifier" ||
+          !node.init
+        ) {
+          return;
+        }
+        const locator = copyLocator(node.init, (identifier) =>
+          resolveCopyVariable(node, identifier),
+        );
+        if (!locator) return;
+        const [variable] = sourceCode.getDeclaredVariables(node);
+        if (variable) copyVariables.set(variable, locator);
+      },
+      CallExpression(node) {
+        if (node.callee.type !== "MemberExpression") return;
+        const action = memberName(node.callee);
+        if (!action || !LOCATOR_ACTIONS.has(action)) return;
+
+        const locator = copyLocator(node.callee.object, (identifier) =>
+          resolveCopyVariable(node, identifier),
+        );
+        if (!locator) return;
+        context.report({
+          node: locator.node,
+          messageId: "unstable",
+          data: { selector: locator.selector },
+        });
+      },
+    };
+  },
+};
+
+const specPlugin = {
+  meta: { name: "limetech-playwright" },
+  rules: { "prefer-stable-action-locator": preferStableActionLocator },
+};
+
 const recommended = playwright.configs["flat/recommended"];
 
 /**
@@ -157,6 +352,7 @@ export default [
   {
     ...recommended,
     files: PLAYWRIGHT_SPEC_FILES,
+    plugins: { ...recommended.plugins, "limetech-playwright": specPlugin },
     rules: { ...recommended.rules, ...CURATED_SPEC_RULES },
   },
   {
