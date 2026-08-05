@@ -59,7 +59,10 @@ test("mixed value+type imports converge on a single --fix pass", () => {
   );
   const valueLine = importLines.find((l) => !l.startsWith("import type"));
   const typeLine = importLines.find((l) => l.startsWith("import type"));
-  assert.ok(valueLine && !/\btype\s/.test(valueLine), "value import stays pure");
+  assert.ok(
+    valueLine && !/\btype\s/.test(valueLine),
+    "value import stays pure",
+  );
   assert.match(typeLine, /Alpha/);
   assert.match(typeLine, /Beta/);
 });

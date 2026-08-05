@@ -15,13 +15,16 @@
   },
   "ignorePatterns": [
     "**/node_modules/**",
-    ".nuxt/**",
-    ".output/**",
-    ".wrangler/**",
-    "dist/**",
-    "build/**",
-    "coverage/**",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/.wrangler/**",
+    "**/.vite/**",
+    "**/runtime/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
     "**/*.generated.ts",
-    "**/worker-configuration.d.ts"
+    "**/worker-configuration.d.ts",
+    "**/*.d.ts"
   ]
 }
