@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/unraid/js-standards/compare/js-standards-v1.6.0...js-standards-v2.0.0) (2026-08-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* make Oxlint-first lint workflow default ([#41](https://github.com/unraid/js-standards/issues/41))
+
+### Features
+
+* make Oxlint-first lint workflow default ([#41](https://github.com/unraid/js-standards/issues/41)) ([88877b3](https://github.com/unraid/js-standards/commit/88877b386c3c8debc2c5400d28ae0ea43823fef7))
+
+
+### Chores
+
+* **deps:** bump @eslint-react/eslint-plugin from 5.18.0 to 5.18.1 ([#40](https://github.com/unraid/js-standards/issues/40)) ([1288043](https://github.com/unraid/js-standards/commit/12880432ea33115412e48ccfc22ea590c171a088))
+
 ## [1.6.0](https://github.com/unraid/js-standards/compare/js-standards-v1.5.2...js-standards-v1.6.0) (2026-08-04)
 
 
