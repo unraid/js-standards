@@ -264,8 +264,9 @@ import base from "@unraid/js-standards/knip/base";
 export default { ...base, entry: [...base.entry, "server/index.ts"] };
 ```
 
-Peer deps the consumer provides: `eslint >=10.4`, `typescript >=5.5`, and (for
-the Nuxt preset) `@nuxt/eslint-config`.
+Peer deps the consumer provides: `eslint >=10.4`, `typescript >=5.5`, and
+(for the Nuxt preset) `@nuxt/eslint-config`. Oxlint is an optional peer
+(`oxlint >=1.77`) for repositories that enable the fast pre-pass.
 
 ## Compatibility: `strictNullChecks` is REQUIRED
 
@@ -369,31 +370,78 @@ one version in the consumer:
 "eslint-plugin-import-x": "4.17.1"
 ```
 
-## Linting architecture: ESLint authoritative + Oxlint pre-pass
+## Linting architecture: Oxlint first + full ESLint
 
-**ESLint is the authoritative gate.** It's the only tool that covers everything
-we need: Vue `<template>` rules, sonarjs cognitive-complexity + duplication,
-deslop redundant-comment detection, and the full type-aware set including
-`no-unnecessary-condition` and `no-misused-promises`. It's slow (~135s on
-community-apps-worker) but complete — run it in CI and pre-push.
+The package now dogfoods the same workflow it recommends to consumers:
 
-**Oxlint is a fast pre-pass for local feedback.** It runs the syntactic subset
-**~300× faster** (0.4s vs 135s) and parses `.vue` SFCs — ideal for editor/save
-and pre-commit so you catch cheap mistakes instantly without waiting for the
-full ESLint run. It does NOT replace ESLint (it can't do Vue templates, sonarjs,
-deslop, or a couple of type-aware rules).
+- **Oxlint runs first** for fast syntax, correctness, suspicious-code,
+  performance, import, promise, TypeScript, Unicorn, and Oxc checks.
+- **ESLint still runs fully** afterward. Keep the full config when you need the
+  Vue template rules, sonarjs cognitive-complexity and duplication, deslop,
+  eslint-comments, and the complete typescript-eslint type-aware set.
+- **ESLint caching and worker threads** are enabled for repeat and large-tree
+  runs. The cache lives under `.cache/` and must not be committed.
 
-**1. Consumer `.oxlintrc.json`** — extend the shared base. ⚠️ Oxlint does **not**
-support npm-package specifiers in `extends` (only file paths), so point at the
-installed file via its stable pnpm symlink path:
+The package scripts expose both the combined workflow and each pass separately:
+
+```bash
+pnpm lint                  # oxlint, then cached full ESLint
+pnpm lint:fast             # oxlint only
+pnpm lint:eslint           # cached full ESLint with worker threads
+pnpm lint:eslint:full      # full-tree ESLint without the cache
+pnpm lint:eslint:errors    # errors-only local check; skips warn rules
+pnpm lint:eslint:stats     # JSON timing data for profiling
+```
+
+Do not use `lint:eslint:errors` for suppression-baseline generation: it skips
+warning-level rules. For a deliberate full baseline, run `lint:eslint:full`
+with the repository's reviewed `--suppress-all` command. Use
+`--cache-strategy content` instead of the default metadata strategy only when
+branch switches or generated file mtimes cause unnecessary cache misses.
+
+### Consumer quick start
+
+Install the shared presets and the two linters:
+
+```bash
+pnpm add -D @unraid/js-standards eslint oxlint typescript
+```
+
+Add these two small config files at the consumer repository root:
+
+```js
+// eslint.config.mjs
+import unraid from "@unraid/js-standards/eslint/base";
+
+export default [...unraid];
+```
 
 ```jsonc
 // .oxlintrc.json
-{ "extends": ["./node_modules/@unraid/js-standards/src/oxlint/base.json"] }
+{
+  "extends": ["./node_modules/@unraid/js-standards/src/oxlint/base.json"],
+}
 ```
 
-**2. Dedupe ESLint** — append the oxlint concern last so ESLint skips what Oxlint
-already checked:
+Then copy the scripts below into `package.json`. Use the `nuxt`, `worker`, or
+`node` ESLint export instead of `base` when the repository needs that runtime.
+
+Oxlint's `extends` entries are file paths, which is why the quick-start points
+at the package's installed `src/oxlint/base.json` file.
+
+**2. Keep ESLint full by default.** Do not add the Oxlint dedupe concern when the
+ESLint pass is the authoritative complete run:
+
+```js
+import unraid from "@unraid/js-standards/eslint/nuxt";
+
+export default [...unraid];
+```
+
+**3. Optionally dedupe an explicitly optimized ESLint configuration.** For very
+large repositories, append the exported concern last to turn off ESLint rules
+already covered by the shared Oxlint config. This reduces duplicate work, but
+it is a different mode from the full ESLint gate:
 
 ```js
 import unraid from "@unraid/js-standards/eslint/nuxt";
@@ -401,22 +449,26 @@ import oxlintDisable from "@unraid/js-standards/eslint/oxlint";
 
 export default [
   ...unraid,
-  ...oxlintDisable(), // must be last
+  ...oxlintDisable(), // must be last in the optimized mode
 ];
 ```
 
-**3. Wire the scripts** — Oxlint on pre-commit + first in CI; ESLint after:
+Consumer scripts should mirror the package scripts:
 
 ```jsonc
 "scripts": {
-	"lint:fast": "oxlint",
-	"lint": "oxlint && eslint .",
-	"lint:fix": "oxlint --fix && eslint . --fix"
+	"lint:oxlint": "oxlint",
+	"lint:eslint": "eslint . --cache --cache-location .cache/eslint/ --concurrency=auto",
+	"lint:eslint:full": "eslint . --concurrency=auto",
+	"lint:fast": "pnpm run lint:oxlint",
+	"lint": "pnpm run lint:oxlint && pnpm run lint:eslint"
 }
 ```
 
-Run `oxlint` on pre-commit/pre-push for sub-second feedback; run the full `lint`
-(both) in CI. Peer dep: `oxlint` (consumer installs it).
+For pre-commit, pass only staged source files to Oxlint and the cached ESLint
+command. Keep the full-tree `lint:eslint:full` run in CI or pre-push. ESLint's
+`--stats --format json` and Oxlint's `--debug timings` are diagnostic modes,
+not normal lint commands.
 
 ### Optional: type-aware Oxlint (fast advisory)
 
@@ -441,7 +493,7 @@ semantic rules (unsafe-`any` family, floating promises, `await-thenable`,
 ```
 
 Oxlint type-aware went **stable (2026-07-22)** and now covers **59 of 61** of
-typescript-eslint's type-aware rules (oxlint 1.75 / tsgolint 7.x, tracking TS
+typescript-eslint's type-aware rules (oxlint 1.77 / tsgolint 7.x, tracking TS
 7.0.2) — but never the Vue/sonarjs/deslop rules, which stay ESLint-only.
 
 - **On TS ≤ 6**, treat it as a fast **advisory** alongside the authoritative
@@ -451,10 +503,10 @@ typescript-eslint's type-aware rules (oxlint 1.75 / tsgolint 7.x, tracking TS
   `--type-aware` owns type-safety while ESLint keeps the syntactic + Vue/quality
   rules.
 
-## Why ESLint and not Biome / Oxlint (2026)
+## Why ESLint and Oxlint together (2026)
 
-The faster Rust linters are real and worth using — but not as the _base_ for our
-stack:
+The faster Rust linter is useful as the first pass, but ESLint remains the
+complete gate for this stack:
 
 - **Our repos are Nuxt/Vue.** Oxlint can't fully support `eslint-plugin-vue`
   (Vue uses its own compiler / modified AST, so many rules can't run against SFC
@@ -463,16 +515,9 @@ stack:
 - **The quality-rule value lives in ESLint plugins.** unicorn, sonarjs, deslop,
   and eslint-comments have no Biome/Oxlint equivalent.
 - **Type-aware rules are the core of this config.** typescript-eslint's
-  strict-type-checked is fully mature; Oxlint's `tsgolint` type-aware mode is
-  still preview with known memory/deadlock issues on large monorepos — and we
-  are a monorepo.
-
-**Planned optimization (not blocking):** add Oxlint as a fast _pre-pass_
-(pre-commit + first CI step) for the syntactic rules it already covers — it's
-50–100× faster and gives near-instant local feedback — with
-`eslint-plugin-oxlint` turning off the ESLint rules Oxlint handles to avoid
-double work. ESLint stays authoritative for type-aware + Vue + quality rules. If
-that pre-pass lands, it ships here as an `oxlint/base` export.
+  strict-type-checked remains the complete ESLint type-aware gate; Oxlint's
+  native type-aware mode is available separately for repositories using its
+  TypeScript 7-compatible toolchain.
 
 ## Rollout guidance
 

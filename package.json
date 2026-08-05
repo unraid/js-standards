@@ -43,9 +43,17 @@
   "scripts": {
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test": "eslint . && node --test \"test/**/*.test.mjs\"",
+    "lint:oxlint": "oxlint",
+    "lint:oxlint:fix": "oxlint --fix",
+    "lint:eslint": "eslint . --cache --cache-location .cache/eslint/ --concurrency=auto",
+    "lint:eslint:fix": "eslint . --fix --cache --cache-location .cache/eslint/ --concurrency=auto",
+    "lint:eslint:full": "eslint . --concurrency=auto",
+    "lint:eslint:errors": "eslint . --quiet --cache --cache-location .cache/eslint-errors/ --concurrency=auto",
+    "lint:eslint:stats": "eslint . --stats --format json --concurrency=auto",
+    "lint:fast": "pnpm run lint:oxlint",
+    "lint": "pnpm run lint:oxlint && pnpm run lint:eslint",
+    "lint:fix": "pnpm run lint:oxlint:fix && pnpm run lint:eslint:fix",
+    "test": "pnpm run lint && node --test \"test/**/*.test.mjs\"",
     "test:rules": "node --test \"test/**/*.test.mjs\""
   },
   "dependencies": {
@@ -56,7 +64,7 @@
     "eslint-plugin-deslop": "^0.3.6",
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-oxlint": "^1.72.0",
+    "eslint-plugin-oxlint": "^1.77.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-sonarjs": "^4.1.0",
     "eslint-plugin-unicorn": "^72.0.0",
@@ -68,11 +76,15 @@
   "peerDependencies": {
     "@nuxt/eslint-config": ">=1.16.0",
     "eslint": ">=10.4.0",
+    "oxlint": ">=1.77.0",
     "stylelint": ">=16.0.0",
     "typescript": ">=5.5.0"
   },
   "peerDependenciesMeta": {
     "@nuxt/eslint-config": {
+      "optional": true
+    },
+    "oxlint": {
       "optional": true
     },
     "stylelint": {
@@ -82,6 +94,7 @@
   "devDependencies": {
     "@nuxt/eslint-config": "^1.16.0",
     "eslint": "^10.6.0",
+    "oxlint": "^1.77.0",
     "stylelint": "^17.14.0",
     "typescript": "^6.0.3",
     "vue-eslint-parser": "^10.4.1"
