@@ -175,6 +175,29 @@ This states the target rather than the current state of any one suite. A repo
 adopting mid-stream downgrades specific rules in its own config, which keeps the
 exception visible and local instead of hidden in the shared baseline.
 
+For i18n-heavy suites whose action steps should survive translated-copy edits,
+enable the opt-in stable-action rule on the files Playwright owns:
+
+```js
+export default [
+  ...playwright,
+  {
+    files: ["e2e/**/*.spec.ts"],
+    rules: {
+      "limetech-playwright/prefer-stable-action-locator": "error",
+    },
+  },
+];
+```
+
+The rule flags static copy selectors such as `getByText("Save").click()` and
+`getByRole("button", { name: "Save" }).click()`, including static `hasText`
+filters, when the locator drives an action. Prefer a stable `data-testid` for
+those targets. Copy and accessible-name locators remain valid for assertions,
+role-only locators remain valid, and dynamic scenario data is not treated as UI
+copy. The rule is opt-in because third-party surfaces and accessibility-first
+suites may intentionally use role/name actions and cannot always add test IDs.
+
 Pure convention stays **off** — `prefer-lowercase-title` (style), `require-tags`
 and `no-restricted-*` (need a project vocabulary), `require-soft-assertions`
 (changes failure semantics), `max-expects` (an arbitrary budget), and `no-hooks`
