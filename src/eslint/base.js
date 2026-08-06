@@ -1,7 +1,7 @@
 /**
  * Public preset: base — framework-agnostic full stack.
  *
- * ignores + typescript + quality + testing, then prettier last. For plain TS
+ * ignores + quality + typescript + testing, then prettier last. For plain TS
  * libraries and Node packages with no Vue and no Workers runtime.
  *
  * Compose concerns directly instead if you want finer control:
