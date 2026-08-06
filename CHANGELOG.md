@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/unraid/js-standards/compare/js-standards-v2.0.0...js-standards-v2.1.0) (2026-08-06)
+
+
+### Features
+
+* **eslint:** add stable Playwright action locator rule ([#44](https://github.com/unraid/js-standards/issues/44)) ([8db29de](https://github.com/unraid/js-standards/commit/8db29def2a0758003c5670823643849a3cb0f015))
+
+
+### Bug Fixes
+
+* **eslint:** preserve TypeScript core-rule replacements ([#43](https://github.com/unraid/js-standards/issues/43)) ([2384141](https://github.com/unraid/js-standards/commit/2384141dfb22e14050e6b90653fff9fe8c277f26))
+
 ## [2.0.0](https://github.com/unraid/js-standards/compare/js-standards-v1.6.0...js-standards-v2.0.0) (2026-08-05)
 
 
