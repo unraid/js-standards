@@ -31,6 +31,14 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-non-null-assertion": "error",
+      // `stylisticTypeChecked` enables non-nullable-type-assertion-style, whose
+      // only advice is to rewrite `x as T` into `x!` — the exact syntax
+      // no-non-null-assertion forbids above. Enabling both leaves no valid
+      // shape for a non-null narrowing: the fixer rewrites `as T` to `!`, and
+      // re-linting that output reports an unfixable error. Ban the assertion
+      // and drop the rule that demands it. `testing.js` re-enables `!` for
+      // tests, where this rule is coherent and stays on.
+      "@typescript-eslint/non-nullable-type-assertion-style": "off",
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
