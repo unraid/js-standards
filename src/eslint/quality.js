@@ -111,6 +111,14 @@ export default [
       "unicorn/prefer-ternary": "off",
       "unicorn/no-useless-undefined": "off",
 
+      // --- Unicorn: new in v73. Rewrites every one-line `/** … */` into a
+      //     three-line block. It is pure formatting preference, and adopting it
+      //     here would reformat roughly 4,800 comments across consumers
+      //     (unraid-e2e ~1,050, core ~3,700) as a side effect of a dependency
+      //     bump. Left off so the style stays a deliberate, separately reviewed
+      //     choice rather than something a major version decides for us.
+      "unicorn/single-line-block-comment-style": "off",
+
       // --- Unicorn: rule that makes the canonical browser top-level check
       //     unspellable. `window.parent === window` is true for a top-level
       //     window (`!==` is the corresponding embedded-frame check), and every
