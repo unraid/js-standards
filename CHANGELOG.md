@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.1.0](https://github.com/unraid/js-standards/compare/js-standards-v2.0.0...js-standards-v2.1.0) (2026-08-18)
+
+
+### Features
+
+* **eslint:** add stable Playwright action locator rule ([#44](https://github.com/unraid/js-standards/issues/44)) ([8db29de](https://github.com/unraid/js-standards/commit/8db29def2a0758003c5670823643849a3cb0f015))
+
+
+### Bug Fixes
+
+* **eslint:** drop the rule that demands a banned non-null assertion ([#51](https://github.com/unraid/js-standards/issues/51)) ([cbfecaa](https://github.com/unraid/js-standards/commit/cbfecaa23d755f529fdf7c04d330e05887057023))
+* **eslint:** preserve TypeScript core-rule replacements ([#43](https://github.com/unraid/js-standards/issues/43)) ([2384141](https://github.com/unraid/js-standards/commit/2384141dfb22e14050e6b90653fff9fe8c277f26))
+
+
+### Chores
+
+* **deps-dev:** bump @nuxt/eslint-config from 1.16.0 to 1.17.0 ([#48](https://github.com/unraid/js-standards/issues/48)) ([88d41c0](https://github.com/unraid/js-standards/commit/88d41c0ad21cab44d2ad367c72722924d5190617))
+* **deps-dev:** bump eslint from 10.8.0 to 10.8.1 ([#50](https://github.com/unraid/js-standards/issues/50)) ([ac97c94](https://github.com/unraid/js-standards/commit/ac97c9499551c2a8a92c8ff41e49e381c8e7887a))
+* **deps:** bump @eslint-react/eslint-plugin from 5.18.1 to 5.18.6 ([#47](https://github.com/unraid/js-standards/issues/47)) ([26be86b](https://github.com/unraid/js-standards/commit/26be86bff1202177406a4032e672bfa54999eac8))
+* **deps:** bump eslint-plugin-unicorn from 72.0.0 to 73.0.0 ([#46](https://github.com/unraid/js-standards/issues/46)) ([e49fad5](https://github.com/unraid/js-standards/commit/e49fad5829e0ab7ecb09ba733b7f68cbc031245f))
+* **deps:** bump the lint-toolchain group with 4 updates ([#53](https://github.com/unraid/js-standards/issues/53)) ([2a84bd2](https://github.com/unraid/js-standards/commit/2a84bd223947c6aa2793a8afce960f7513fbe3d3))
+* **deps:** bundle routine dependency updates into one pull request ([#52](https://github.com/unraid/js-standards/issues/52)) ([dea7a6f](https://github.com/unraid/js-standards/commit/dea7a6ff94d57a484ec66679b9e04cd4c199ef38))
+
 ## [2.0.0](https://github.com/unraid/js-standards/compare/js-standards-v1.6.0...js-standards-v2.0.0) (2026-08-05)
 
 
