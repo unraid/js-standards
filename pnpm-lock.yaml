@@ -46,7 +46,7 @@ importers:
         version: 72.0.0(eslint@10.8.1)
       globals:
         specifier: ^17.7.0
-        version: 17.8.0
+        version: 17.11.0
       prettier:
         specifier: ^3.9.4
         version: 3.9.6
@@ -1552,8 +1552,8 @@ packages:
     resolution: {integrity: sha512-awConJSVCHVGND6x3tmMaKcQvwXLhjdkmomy2W+Goaui8YPgYgXJZewhg3fWC+DlfqqQuWg8AwqjGTD2nAPVWg==}
     engines: {node: '>=6'}
 
-  globals@17.8.0:
-    resolution: {integrity: sha512-Zz/LMDZScFmkakeL2cTHzf+PbWKdpU3uclqkZT7TjDG58j5WPt0PpA+n9uPI24fZtlw07q0OtEi84K+umsRzqQ==}
+  globals@17.11.0:
+    resolution: {integrity: sha512-Z2I8hM+PbJDXQDq3Icgpzv+mPdwr68iZUU9d5WW4FuXfDUQfkZaZuvjMv42/5crNyw154+9+VWXbYrUgDXbxNw==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -2907,7 +2907,7 @@ snapshots:
       eslint-plugin-unicorn: 65.0.1(eslint@10.8.1)
       eslint-plugin-vue: 10.9.2(@stylistic/eslint-plugin@5.10.0(eslint@10.8.1))(@typescript-eslint/parser@8.62.1(eslint@10.8.1)(typescript@6.0.3))(eslint@10.8.1)(vue-eslint-parser@10.4.1(eslint@10.8.1))
       eslint-processor-vue-blocks: 2.0.0(@vue/compiler-sfc@3.5.39)(eslint@10.8.1)
-      globals: 17.8.0
+      globals: 17.11.0
       local-pkg: 1.2.1
       pathe: 2.0.3
       vue-eslint-parser: 10.4.1(eslint@10.8.1)
@@ -3823,7 +3823,7 @@ snapshots:
   eslint-plugin-playwright@2.11.0(eslint@10.8.1):
     dependencies:
       eslint: 10.8.1
-      globals: 17.8.0
+      globals: 17.11.0
 
   eslint-plugin-react-dom@5.18.6(eslint@10.8.1)(typescript@6.0.3):
     dependencies:
@@ -3949,7 +3949,7 @@ snapshots:
       bytes: 3.1.2
       eslint: 10.8.1
       functional-red-black-tree: 1.0.1
-      globals: 17.8.0
+      globals: 17.11.0
       jsx-ast-utils-x: 0.1.0
       lodash.merge: 4.6.2
       minimatch: 10.2.5
@@ -3969,7 +3969,7 @@ snapshots:
       detect-indent: 7.0.2
       eslint: 10.8.1
       find-up-simple: 1.0.1
-      globals: 17.8.0
+      globals: 17.11.0
       indent-string: 5.0.0
       is-builtin-module: 5.0.0
       jsesc: 3.1.0
@@ -3990,7 +3990,7 @@ snapshots:
       entities: 4.5.0
       eslint: 10.8.1
       find-up-simple: 1.0.1
-      globals: 17.8.0
+      globals: 17.11.0
       indent-string: 5.0.0
       is-builtin-module: 5.0.0
       is-identifier: 1.1.0
@@ -4241,7 +4241,7 @@ snapshots:
       kind-of: 6.0.3
       which: 1.3.1
 
-  globals@17.8.0: {}
+  globals@17.11.0: {}
 
   globalthis@1.0.4:
     dependencies:
