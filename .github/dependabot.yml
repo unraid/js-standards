@@ -9,3 +9,16 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    groups:
+      # Every dependency here is lint/format tooling that ships as one shared
+      # config, so routine bumps are reviewed and released together rather than
+      # one pull request per package.
+      lint-toolchain:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Majors stay ungrouped on purpose. A major bump of a plugin or of
+    # typescript-eslint can add, remove, or re-scope rules for every consumer of
+    # this config, so each one needs its own pull request and its own release.
