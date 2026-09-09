@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import stylelint from "stylelint";
 
 import baseConfig from "../src/stylelint/base.js";
-import designTokens from "../src/stylelint/design-tokens.js";
+import designTokens from "../src/stylelint/designTokens.js";
 
 // Lint a CSS string against a config and return the flat list of rule names that
 // fired. `stylelint.lint` never throws on lint violations — it reports them as

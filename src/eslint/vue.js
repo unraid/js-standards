@@ -64,8 +64,13 @@ export default [
     },
   },
   {
-    // Vue component files may legitimately be PascalCase.
-    files: ["**/*.vue"],
+    // Preserve Vue component names and Nuxt filenames that define route URLs.
+    files: [
+      "**/*.vue",
+      "**/pages/**",
+      "**/server/api/**",
+      "**/server/routes/**",
+    ],
     rules: {
       "unicorn/filename-case": "off",
     },

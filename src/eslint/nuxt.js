@@ -6,7 +6,7 @@
  */
 import prettier from "eslint-config-prettier";
 import core from "./core.js";
-import cloudflareWorkers from "./cloudflare-workers.js";
+import cloudflareWorkers from "./cloudflareWorkers.js";
 import vue from "./vue.js";
 import { webguiGlobals } from "./globals.js";
 

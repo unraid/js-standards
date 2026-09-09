@@ -108,13 +108,4 @@ export default [
     },
     rules: reactRules,
   },
-  {
-    // React component files are legitimately PascalCase (e.g. `Button.tsx`),
-    // which the kebab-case default would flag. Mirrors how the `vue` concern
-    // exempts `.vue` files.
-    files: REACT_FILES,
-    rules: {
-      "unicorn/filename-case": "off",
-    },
-  },
 ];

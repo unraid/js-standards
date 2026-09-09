@@ -138,8 +138,7 @@ The rule set is **curated for correct React UI patterns + anti-slop**, not
 `recommended` flat config is spread in whole; and `react-hooks/rules-of-hooks`
 (error) + `react-hooks/exhaustive-deps` (warn) — sourced from
 `eslint-plugin-react-hooks`, not @eslint-react's own equivalents — guard the
-classic hook footguns. Component files are exempted from
-`unicorn/filename-case` since React components are PascalCase.
+classic hook footguns. Component files allow camelCase modules and PascalCase components.
 
 Composition note: unlike the Vue layer, this concern only bundles the three
 React plugins (not typescript-eslint / unicorn), so it composes cleanly with the
@@ -597,3 +596,16 @@ version in consumers; let Renovate open the bump PR so its CI run is the test.
 Currently `private` + GitHub Packages (`publishConfig.access: "restricted"`).
 To go public later: set `"private": false`, `access: "public"`, drop the
 `registry` override, and publish to npm.
+
+## Filenames
+
+Ordinary JavaScript and TypeScript modules use camelCase (`themeUtils.ts`,
+`themeUtils.test.ts`). JSX/TSX files also allow PascalCase components
+(`ThemePicker.tsx`). Directory names are not checked, so package identifiers
+and URL paths keep their existing spelling. The Vue/Nuxt concern preserves
+SFC names and filenames under `pages/`, `server/api/`, and `server/routes/`
+where the filename can define a route. Tool-defined names such as
+`eslint.config.mjs`, `vite.config.ts`, and `index.ts` remain valid.
+
+Rename modules and update their imports when adopting this release. Public
+package export names can remain stable while their source targets are renamed.
