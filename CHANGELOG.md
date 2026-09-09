@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/unraid/js-standards/compare/js-standards-v2.1.0...js-standards-v3.0.0) (2026-09-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* ordinary JavaScript and TypeScript module filenames must use camelCase. JSX and TSX also accept PascalCase components; Vue and Nuxt route filenames retain framework conventions. Public package exports remain unchanged.
+
+### Features
+
+* enforce camelCase browser module filenames ([#57](https://github.com/unraid/js-standards/issues/57)) ([8d66b2d](https://github.com/unraid/js-standards/commit/8d66b2dfeaa7d6ff7d8f7687bef4bffd6e3569c6))
+
 ## [2.1.0](https://github.com/unraid/js-standards/compare/js-standards-v2.0.0...js-standards-v2.1.0) (2026-08-18)
 
 
