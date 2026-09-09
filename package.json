@@ -21,10 +21,10 @@
     "./eslint/node": "./src/eslint/node.js",
     "./eslint/typescript": "./src/eslint/typescript.js",
     "./eslint/quality": "./src/eslint/quality.js",
-    "./eslint/strict-size": "./src/eslint/strict-size.js",
+    "./eslint/strict-size": "./src/eslint/strictSize.js",
     "./eslint/vue": "./src/eslint/vue.js",
     "./eslint/react": "./src/eslint/react.js",
-    "./eslint/cloudflare-workers": "./src/eslint/cloudflare-workers.js",
+    "./eslint/cloudflare-workers": "./src/eslint/cloudflareWorkers.js",
     "./eslint/testing": "./src/eslint/testing.js",
     "./eslint/playwright": "./src/eslint/playwright.js",
     "./eslint/oxlint": "./src/eslint/oxlint.js",
@@ -39,7 +39,7 @@
     "./oxlint/base": "./src/oxlint/base.json",
     "./oxlint/type-aware": "./src/oxlint/type-aware.json",
     "./stylelint/base": "./src/stylelint/base.js",
-    "./stylelint/design-tokens": "./src/stylelint/design-tokens.js"
+    "./stylelint/design-tokens": "./src/stylelint/designTokens.js"
   },
   "scripts": {
     "format": "prettier . --write",

@@ -94,10 +94,16 @@ export default [
       //     `import type { … } from "m"`, which `no-duplicates` does NOT flag
       //     (pure value + pure type-only are allowed). The apparent "conflict"
       //     was a half-fixed file inspected without running the fixer to a fixed
-      //     point — see test/type-import-convergence.test.mjs.
+      //     point — see test/typeImportConvergence.test.mjs.
       "import-x/no-duplicates": "error",
       "import-x/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "import-x/no-mutable-exports": "error",
+
+      // Module filenames use camelCase; package and URL directories retain their names.
+      "unicorn/filename-case": [
+        "error",
+        { case: "camelCase", checkDirectories: false },
+      ],
 
       // --- Unicorn: keep the sharp rules, silence the pure-opinion nagging
       //     that fights domain naming and our stack.
@@ -105,7 +111,6 @@ export default [
       "unicorn/name-replacements": "off",
       "unicorn/consistent-boolean-name": "off",
       "unicorn/no-null": "off",
-      "unicorn/filename-case": "off",
       "unicorn/prefer-top-level-await": "off",
       "unicorn/no-array-reduce": "off",
       "unicorn/prefer-ternary": "off",
@@ -149,6 +154,18 @@ export default [
       //     `undefined`), so `Buffer.from(x).toString("base64")` stays the
       //     only working call. Re-enable once the runtime ships them.
       "unicorn/prefer-uint8array-base64": "off",
+    },
+  },
+  {
+    files: ["**/*.{jsx,tsx}"],
+    rules: {
+      "unicorn/filename-case": [
+        "error",
+        {
+          cases: { camelCase: true, pascalCase: true },
+          checkDirectories: false,
+        },
+      ],
     },
   },
 ];
